@@ -6,6 +6,7 @@ using System.Diagnostics;
 using BlogWebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using BlogWebApp.Services;
 
 namespace BlogWebApp.Controllers
 {
@@ -13,19 +14,23 @@ namespace BlogWebApp.Controllers
     {
 
         private readonly ILogger<BlogController> _logger;
+        private readonly IBlogCosmosDbService _blogDbService;
 
-        public BlogController(ILogger<BlogController> logger)
+        public BlogController(ILogger<BlogController> logger, IBlogCosmosDbService blogDbService)
         {
             _logger = logger;
+            _blogDbService = blogDbService;
         }
 
 
         [Route("")]
-        public IActionResult HomePage()
+        public async Task<IActionResult> HomePage()
         {
             var m = new BlogHomePageViewModel();
 
-            m.BlogPostsMostRecent = new List<Models.BlogPost>();
+            var blogPosts = await _blogDbService.GetBlogPostsMostRecentAsync();
+
+            m.BlogPostsMostRecent = blogPosts;
 
             return View(m);
         }

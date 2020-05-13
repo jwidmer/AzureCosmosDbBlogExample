@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BlogWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -30,6 +31,9 @@ namespace BlogWebApp
             //See https://docs.microsoft.com/en-us/aspnet/core/mvc/views/view-compilation?view=aspnetcore-3.1
             // and launchSettings.json for where/how Razor Runtime Compilation is enabled only while in development.
             // builder.AddRazorRuntimeCompilation();
+
+
+            services.AddSingleton<IBlogCosmosDbService>(InitializeCosmosBlogClientInstanceAsync(Configuration.GetSection("CosmosDbBlog")).GetAwaiter().GetResult());
 
         }
 
@@ -67,5 +71,15 @@ namespace BlogWebApp
                 //});
             });
         }
+
+
+        private static async Task<BlogCosmosDbService> InitializeCosmosBlogClientInstanceAsync(IConfigurationSection configurationSection)
+        {
+            var blogCosmosDbService = new BlogCosmosDbService();
+
+            return blogCosmosDbService;
+        }
+
+
     }
 }
