@@ -28,7 +28,7 @@ namespace BlogWebApp.Controllers
         {
             var m = new BlogHomePageViewModel();
 
-            var blogPosts = await _blogDbService.GetBlogPostsMostRecentAsync();
+            var blogPosts = await _blogDbService.GetBlogPostsMostRecentAsync(5);
 
             m.BlogPostsMostRecent = blogPosts;
 

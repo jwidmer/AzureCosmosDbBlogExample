@@ -9,7 +9,7 @@ namespace BlogWebApp.Services
     public interface IBlogCosmosDbService
     {
 
-        Task<List<BlogPost>> GetBlogPostsMostRecentAsync();
+        Task<List<BlogPost>> GetBlogPostsMostRecentAsync(int numberOfPosts);
 
     }
 }
