@@ -1,4 +1,5 @@
 ﻿using BlogWebApp.Models;
+using Microsoft.Azure.Cosmos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,15 @@ namespace BlogWebApp.Services
 {
     public class BlogCosmosDbService : IBlogCosmosDbService
     {
+
+        private Container _usersContainer;
+        private Container _postsContainer;
+
+        public BlogCosmosDbService(CosmosClient dbClient, string databaseName)
+        {
+            _usersContainer = dbClient.GetContainer(databaseName, "Users");
+            _postsContainer = dbClient.GetContainer(databaseName, "Posts");
+        }
 
 
         public async Task<List<BlogPost>> GetBlogPostsMostRecentAsync()

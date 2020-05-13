@@ -6,6 +6,8 @@ using BlogWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -75,7 +77,24 @@ namespace BlogWebApp
 
         private static async Task<BlogCosmosDbService> InitializeCosmosBlogClientInstanceAsync(IConfigurationSection configurationSection)
         {
-            var blogCosmosDbService = new BlogCosmosDbService();
+            string databaseName = configurationSection.GetSection("DatabaseName").Value;
+            string account = configurationSection.GetSection("Account").Value;
+            string key = configurationSection.GetSection("Key").Value;
+
+            CosmosClientBuilder clientBuilder = new CosmosClientBuilder(account, key);
+            CosmosClient client = clientBuilder
+                .WithApplicationName(databaseName)
+                .WithApplicationName(Regions.EastUS)
+                .WithConnectionModeDirect()
+                .WithSerializerOptions(new CosmosSerializationOptions() { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase })
+                .Build();
+            var blogCosmosDbService = new BlogCosmosDbService(client, databaseName);
+            DatabaseResponse database = await client.CreateDatabaseIfNotExistsAsync(databaseName);
+
+            //Container name is also specified in the BlogCosmosDbService
+            await database.Database.CreateContainerIfNotExistsAsync("Users", "/userId");
+            await database.Database.CreateContainerIfNotExistsAsync("Posts", "/postId");
+
 
             return blogCosmosDbService;
         }
