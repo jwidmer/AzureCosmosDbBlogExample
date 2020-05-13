@@ -1,3 +1,19 @@
-﻿
+﻿@model BlogHomePageViewModel
+
 
 <h1>My Azure Cosmos DB Blog Sample Home Page</h1>
+
+
+@if (!Model.BlogPostsMostRecent.Any())
+{
+    <div class="alert alert-info">There are no posts in this blog.</div>
+}
+
+
+@foreach (var bp in Model.BlogPostsMostRecent)
+{
+    <h3 class="mt-5">@bp.Title</h3>
+    <p>
+        @bp.Content
+    </p>
+}

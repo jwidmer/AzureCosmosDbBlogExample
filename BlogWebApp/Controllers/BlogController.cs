@@ -23,7 +23,11 @@ namespace BlogWebApp.Controllers
         [Route("")]
         public IActionResult HomePage()
         {
-            return View();
+            var m = new BlogHomePageViewModel();
+
+            m.BlogPostsMostRecent = new List<Models.BlogPost>();
+
+            return View(m);
         }
 
 
