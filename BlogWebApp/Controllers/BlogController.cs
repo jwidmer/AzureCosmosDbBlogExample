@@ -43,5 +43,11 @@ namespace BlogWebApp.Controllers
             return View(new BlogErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        [Route("Privacy")]
+        public async Task<IActionResult> Privacy()
+        {
+            return View();
+        }
+
     }
 }

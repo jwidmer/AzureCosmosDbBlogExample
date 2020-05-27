@@ -26,7 +26,7 @@ namespace BlogWebApp.Services
             var blogPosts = new List<BlogPost>();
 
             var queryString = $"SELECT TOP {numberOfPosts} * FROM p WHERE p.type='post' ORDER BY p.dateCreated DESC";
-            var query = this._postsContainer.GetItemQueryIterator<BlogPost>(new QueryDefinition(queryString));
+            var query = _postsContainer.GetItemQueryIterator<BlogPost>(new QueryDefinition(queryString));
             while (query.HasMoreResults)
             {
                 var response = await query.ReadNextAsync();
@@ -36,6 +36,13 @@ namespace BlogWebApp.Services
 
             return blogPosts;
         }
+
+
+        public async Task CreateUserAsync(BlogUser user)
+        {
+            await _usersContainer.CreateItemAsync<BlogUser>(user, new PartitionKey(user.UserId));
+        }
+
 
     }
 }

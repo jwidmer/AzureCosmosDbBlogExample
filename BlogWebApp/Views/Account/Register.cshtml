@@ -1,0 +1,22 @@
+﻿@model AccountRegisterViewModel
+
+
+<h1>Register</h1>
+
+
+@using (Html.BeginForm())
+{
+    <div class="form-group">
+        <label for="username">Username</label> <span asp-validation-for="Username" class="text-danger small"></span>
+        <input type="text" class="form-control" id="username" value="@Model.Username" asp-for="Username">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-info mt-5">@Model.Message</div>
+    }
+
+    <div asp-validation-summary="All" class="text-danger mt-5"></div>
+}
