@@ -92,7 +92,12 @@ namespace BlogWebApp
             DatabaseResponse database = await client.CreateDatabaseIfNotExistsAsync(databaseName);
 
             //IMPORTANT: Container name is also specified in the BlogCosmosDbService
-            await database.Database.CreateContainerIfNotExistsAsync("Users", "/userId");
+            await database.Database.DefineContainer(name: "Users", partitionKeyPath: "/userId")
+                            .WithUniqueKey()
+                                .Path("/username")
+                            .Attach()
+                            .CreateIfNotExistsAsync();
+
             await database.Database.CreateContainerIfNotExistsAsync("Posts", "/postId");
 
 
