@@ -61,7 +61,7 @@ namespace BlogWebApp.Controllers
             catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
             {
                 //item already existed.  Optimize for the success path.
-                m.Message = $"User with the username {username} already exists.";
+                ModelState.AddModelError("", $"User with the username {username} already exists.");
             }
 
 

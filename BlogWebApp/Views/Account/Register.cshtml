@@ -18,5 +18,8 @@
         <div class="alert alert-info mt-5">@Model.Message</div>
     }
 
-    <div asp-validation-summary="All" class="text-danger mt-5"></div>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="alert alert-danger mt-5"></div>
+    }
 }
