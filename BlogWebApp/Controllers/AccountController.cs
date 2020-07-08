@@ -10,6 +10,9 @@ using BlogWebApp.Services;
 using Microsoft.Azure.Cosmos;
 using System.Net;
 using BlogWebApp.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace BlogWebApp.Controllers
 {
@@ -98,10 +101,61 @@ namespace BlogWebApp.Controllers
                 return View(m);
             }
 
-            //TODO: login user
+            //The user exists in the database, log them in!
+
+            var claims = new List<Claim>();
+
+            //https://stackoverflow.com/questions/5814017/what-is-the-purpose-of-nameidentifier-claim
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.UserId));
+            claims.Add(new Claim(ClaimTypes.Name, user.Username));
+
+            //Roles can be User (can add comments) or Admin (can add blog posts)
+            claims.Add(new Claim(ClaimTypes.Role, "User"));
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                //AllowRefresh = <bool>,
+                // Refreshing the authentication session should be allowed.
+
+                //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
+                // The time at which the authentication ticket expires. A
+                // value set here overrides the ExpireTimeSpan option of
+                // CookieAuthenticationOptions set with AddCookie.
+
+                //IsPersistent = true,
+                // Whether the authentication session is persisted across
+                // multiple requests. When used with cookies, controls
+                // whether the cookie's lifetime is absolute (matching the
+                // lifetime of the authentication ticket) or session-based.
+
+                //IssuedUtc = <DateTimeOffset>,
+                // The time at which the authentication ticket was issued.
+
+                //RedirectUri = <string>
+                // The full path or absolute URI to be used as an http
+                // redirect response value.
+            };
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
             return Redirect("/");
         }
+
+
+
+        [Route("Logout")]
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+
+            return Redirect("/");
+
+        }
+
+
 
     }
 }

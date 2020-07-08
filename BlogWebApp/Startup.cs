@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BlogWebApp.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,6 +28,17 @@ namespace BlogWebApp
 
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.AccessDeniedPath = new PathString("/login");
+                    options.LoginPath = new PathString("/login");
+                });
+
+            services.AddHttpContextAccessor();
+
+
             //See https://andrewlock.net/comparing-startup-between-the-asp-net-core-3-templates/ for more info on AddMvc vs AddControllers vs AddRazorPages vs AddControllersWithViews
             IMvcBuilder builder = services.AddControllersWithViews();
 
@@ -60,6 +72,7 @@ namespace BlogWebApp
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
