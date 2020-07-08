@@ -77,5 +77,31 @@ namespace BlogWebApp.Controllers
             return View(m);
         }
 
+
+        [Route("Login")]
+        [HttpPost]
+        public async Task<IActionResult> Login(AccountLoginViewModel m)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return View(m);
+            }
+
+            var username = m.Username.Trim().ToLower();
+
+            var user = await _blogDbService.GetUserAsync(username);
+
+            if (user == null)
+            {
+                ModelState.AddModelError("", $"Unable to login.  Username does not exist.");
+                return View(m);
+            }
+
+            //TODO: login user
+
+            return Redirect("/");
+        }
+
     }
 }

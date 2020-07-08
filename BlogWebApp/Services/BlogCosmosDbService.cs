@@ -73,5 +73,32 @@ namespace BlogWebApp.Services
 
         }
 
+
+        public async Task<BlogUser> GetUserAsync(string username)
+        {
+
+            var queryDefinition = new QueryDefinition("SELECT * FROM u WHERE u.type = 'user' AND u.username = @username").WithParameter("@username", username);
+
+            var query = this._usersContainer.GetItemQueryIterator<BlogUser>(queryDefinition);
+
+            List<BlogUser> results = new List<BlogUser>();
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+
+                results.AddRange(response.ToList());
+            }
+
+            if (results.Count > 1)
+            {
+                throw new Exception($"More than one user fround for username '{username}'");
+            }
+
+            var u = results.SingleOrDefault();
+            return u;
+
+        }
+
+
     }
 }

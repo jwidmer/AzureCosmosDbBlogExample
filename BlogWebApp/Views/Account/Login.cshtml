@@ -4,3 +4,18 @@
 <h1>Login</h1>
 
 
+@using (Html.BeginForm())
+{
+    <div class="form-group">
+        <label for="username">Username</label> <span asp-validation-for="Username" class="text-danger small"></span>
+        <input type="text" class="form-control" id="username" value="@Model.Username" asp-for="Username">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Login</button>
+
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="alert alert-danger mt-5"></div>
+    }
+}

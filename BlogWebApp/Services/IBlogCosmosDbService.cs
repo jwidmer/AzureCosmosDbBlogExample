@@ -11,6 +11,7 @@ namespace BlogWebApp.Services
 
         Task<List<BlogPost>> GetBlogPostsMostRecentAsync(int numberOfPosts);
         Task CreateUserAsync(BlogUser user);
+        Task<BlogUser> GetUserAsync(string username);
 
     }
 }
