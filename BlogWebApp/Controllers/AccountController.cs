@@ -83,7 +83,7 @@ namespace BlogWebApp.Controllers
 
         [Route("Login")]
         [HttpPost]
-        public async Task<IActionResult> Login(AccountLoginViewModel m)
+        public async Task<IActionResult> Login(AccountLoginViewModel m, string returnUrl)
         {
 
             if (!ModelState.IsValid)
@@ -109,8 +109,13 @@ namespace BlogWebApp.Controllers
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.UserId));
             claims.Add(new Claim(ClaimTypes.Name, user.Username));
 
-            //Roles can be User (can add comments) or Admin (can add blog posts)
-            claims.Add(new Claim(ClaimTypes.Role, "User"));
+            //Roles can be none (can add comments) or Admin (can add blog posts)
+
+            //TODO: How to know if this user is admin.
+            if (user.Username == "jeffw")
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            }
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -140,6 +145,11 @@ namespace BlogWebApp.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
+            //check for return url
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
             return Redirect("/");
         }
 
