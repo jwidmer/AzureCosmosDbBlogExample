@@ -35,13 +35,40 @@ namespace BlogWebApp.Controllers
                 return View("PostNotFound");
             }
 
-            var m = new BlogPostEditViewModel();
-            m.BlogPost = bp;
-
-
+            var m = new BlogPostEditViewModel
+            {
+                Title = bp.Title,
+                Content = bp.Content
+            };
             return View(m);
         }
 
+
+        [Route("post/{postId}")]
+        [Authorize("RequireAdmin")]
+        [HttpPost]
+        public async Task<IActionResult> PostEdit(string postId, BlogPostEditViewModel blogPostChanges)
+        {
+            //TODO: validate the model
+
+            var bp = await _blogDbService.GetBlogPostAsync(postId);
+
+            if (bp == null)
+            {
+                return View("PostNotFound");
+            }
+
+            bp.Title = blogPostChanges.Title;
+            bp.Content = blogPostChanges.Content;
+
+            //Update the database with these changes.
+            await _blogDbService.UpsertBlogPostAsync(bp);
+
+            //Show the view with a message that the blog post has been updated.
+            ViewBag.Success = true;
+
+            return View(blogPostChanges);
+        }
 
 
     }

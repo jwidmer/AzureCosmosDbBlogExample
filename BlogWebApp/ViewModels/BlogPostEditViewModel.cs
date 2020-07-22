@@ -8,9 +8,11 @@ namespace BlogWebApp.ViewModels
 {
     public class BlogPostEditViewModel
     {
+        public string PostId { get; set; }
 
-        public BlogPost BlogPost { get; set; }
+        public string Title { get; set; }
 
+        public string Content { get; set; }
 
     }
 }

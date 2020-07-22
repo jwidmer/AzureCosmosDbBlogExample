@@ -9,19 +9,19 @@
 
     <div class="form-group">
         <label for="title" class="h5">Title</label>
-        <input type="text" class="form-control" id="title" value="@Model.BlogPost.Title">
+        <input type="text" class="form-control" id="title" name="title" value="@Model.Title">
     </div>
 
     <div class="form-group">
         <label for="content" class="h5">Content</label>
-        <textarea rows="10" class="form-control" id="content" aria-describedby="contentHelp" style="resize:vertical;">@Model.BlogPost.Content</textarea>
+        <textarea rows="10" class="form-control" id="content" name="content" aria-describedby="contentHelp" style="resize:vertical;">@Model.Content</textarea>
         <small id="contentHelp" class="form-text text-muted">Content of the blog post.</small>
     </div>
 
 
     <div class="mt-5">
         <button class="btn btn-primary">Save</button>
-        <a href="/post/@Model.BlogPost.PostId" class="btn btn-light">Cancel</a>
+        <a href="/post/@Model.PostId" class="btn btn-light">Cancel</a>
     </div>
 }
 
