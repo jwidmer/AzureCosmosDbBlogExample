@@ -2,3 +2,13 @@
 
 
 <h1>Blog Post Edit</h1>
+
+<h2>@Model.BlogPost.Title</h2>
+
+
+
+<textarea rows="10">@Model.BlogPost.Content</textarea>
+
+
+<button class="btn btn-primary">Save</button>
+<a href="/post/@Model.BlogPost.PostId" class="btn btn-light">Cancel</a>

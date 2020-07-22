@@ -28,8 +28,18 @@ namespace BlogWebApp.Controllers
         [Authorize("RequireAdmin")]
         public async Task<IActionResult> PostEdit(string postId)
         {
+            var bp = await _blogDbService.GetBlogPostAsync(postId);
 
-            return View();
+            if (bp == null)
+            {
+                return View("PostNotFound");
+            }
+
+            var m = new BlogPostEditViewModel();
+            m.BlogPost = bp;
+
+
+            return View(m);
         }
 
 
