@@ -13,6 +13,8 @@ using BlogWebApp.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using System.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace BlogWebApp.Controllers
 {
@@ -20,11 +22,13 @@ namespace BlogWebApp.Controllers
     {
 
         private readonly ILogger<BlogController> _logger;
+        private readonly AppSettings _appSettings;
         private readonly IBlogCosmosDbService _blogDbService;
 
-        public AccountController(ILogger<BlogController> logger, IBlogCosmosDbService blogDbService)
+        public AccountController(ILogger<BlogController> logger, IOptions<AppSettings> appSettings, IBlogCosmosDbService blogDbService)
         {
             _logger = logger;
+            _appSettings = appSettings.Value ?? throw new ArgumentException(nameof(appSettings));
             _blogDbService = blogDbService;
         }
 
@@ -109,10 +113,9 @@ namespace BlogWebApp.Controllers
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.UserId));
             claims.Add(new Claim(ClaimTypes.Name, user.Username));
 
-            //Roles can be none (can add comments) or Admin (can add blog posts)
-
-            //TODO: How to know if this user is admin.
-            if (user.Username == "jeffw")
+            //Roles can be none (can add comments) or Admin (can add/edit blog posts)
+            //Use the appsettings.json to know if this is the admin (keeping it very simple and there is only a single admin).
+            if (user.Username.ToLower() == _appSettings.AdminUsername.ToLower())
             {
                 claims.Add(new Claim(ClaimTypes.Role, "Admin"));
             }
