@@ -57,6 +57,11 @@ namespace BlogWebApp.Services
         }
 
 
+        public async Task UpsertBlogPostAsync(BlogPost post)
+        {
+            await this._postsContainer.UpsertItemAsync<BlogPost>(post, new PartitionKey(post.PostId));
+        }
+
 
         public async Task CreateUserAsync(BlogUser user)
         {
