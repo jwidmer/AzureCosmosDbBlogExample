@@ -40,6 +40,24 @@ namespace BlogWebApp.Services
         }
 
 
+        public async Task<BlogPost> GetBlogPostAsync(string postId)
+        {
+            try
+            {
+                //When getting the blogpost from the Posts container, the id is postId and the partitionKey is also postId.
+                //  This will automatically return only the type="post" for this postId (and not the type=comment or any other types in the same partition postId)
+                ItemResponse<BlogPost> response = await this._postsContainer.ReadItemAsync<BlogPost>(postId, new PartitionKey(postId));
+                var ru = response.RequestCharge;
+                return response.Resource;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+        }
+
+
+
         public async Task CreateUserAsync(BlogUser user)
         {
 
