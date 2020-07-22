@@ -29,6 +29,7 @@ namespace BlogWebApp
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AppSettings>(Configuration);
 
             services.AddAuthorization(options =>
             {
