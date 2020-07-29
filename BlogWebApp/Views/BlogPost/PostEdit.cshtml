@@ -23,5 +23,12 @@
         <button class="btn btn-primary">Save</button>
         <a href="/post/@Model.PostId" class="btn btn-light">Cancel</a>
     </div>
+
+    @if (ViewBag.Success != null && ViewBag.Success)
+    {
+        <div class="alert alert-success mt-3">
+            Your changes have been saved!
+        </div>
+    }
 }
 
