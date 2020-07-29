@@ -14,7 +14,7 @@
 
     <div class="form-group">
         <label for="content" class="h5">Content</label> <span asp-validation-for="Content" class="text-danger"></span>
-        <textarea rows="10" class="form-control @(ViewData.ModelState.Any(p => p.Key == "Content" && p.Value.ValidationState == ModelValidationState.Invalid) ? "is-invalid" : "")" id="content" name="content" aria-describedby="contentHelp" style="resize:vertical;">@Model.Content</textarea>
+        <textarea rows="20" class="form-control @(ViewData.ModelState.Any(p => p.Key == "Content" && p.Value.ValidationState == ModelValidationState.Invalid) ? "is-invalid" : "")" id="content" name="content" aria-describedby="contentHelp" style="resize:vertical;">@Model.Content</textarea>
         <small id="contentHelp" class="form-text text-muted">Content of the blog post.</small>
     </div>
 
@@ -32,9 +32,12 @@
     }
 }
 
-@section Scripts{
+@section Head{
     <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-    <script>
+}
+
+@section Scripts{
+    <script type="text/javascript">
         tinymce.init({
             selector: '#content'
         });
