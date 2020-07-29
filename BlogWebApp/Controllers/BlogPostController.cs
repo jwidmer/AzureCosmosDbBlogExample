@@ -49,7 +49,10 @@ namespace BlogWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> PostEdit(string postId, BlogPostEditViewModel blogPostChanges)
         {
-            //TODO: validate the model
+            if (!ModelState.IsValid)
+            {
+                return View(blogPostChanges);
+            }
 
             var bp = await _blogDbService.GetBlogPostAsync(postId);
 
