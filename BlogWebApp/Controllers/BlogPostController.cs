@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using BlogWebApp.Services;
 using Microsoft.AspNetCore.Authorization;
+using BlogWebApp.Models;
+using System.Security.Claims;
 
 namespace BlogWebApp.Controllers
 {
@@ -22,6 +24,21 @@ namespace BlogWebApp.Controllers
             _logger = logger;
             _blogDbService = blogDbService;
         }
+
+
+        [Route("post/new")]
+        [Authorize("RequireAdmin")]
+        public IActionResult PostNew()
+        {
+
+            var m = new BlogPostEditViewModel
+            {
+                Title = "",
+                Content = ""
+            };
+            return View("PostEdit", m);
+        }
+
 
 
         [Route("post/{postId}")]
@@ -41,6 +58,37 @@ namespace BlogWebApp.Controllers
                 Content = bp.Content
             };
             return View(m);
+        }
+
+
+        [Route("post/new")]
+        [Authorize("RequireAdmin")]
+        [HttpPost]
+        public async Task<IActionResult> PostNew(BlogPostEditViewModel blogPostChanges)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("PostEdit", blogPostChanges);
+            }
+
+
+            var blogPost = new BlogPost
+            {
+                PostId = Guid.NewGuid().ToString(),
+                Title = blogPostChanges.Title,
+                Content = blogPostChanges.Content,
+                AuthorId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value,
+                AuthorUsername = User.Identity.Name,
+                DateCreated = DateTime.UtcNow,
+            };
+
+            //Insert the new blog post into the database.
+            await _blogDbService.UpsertBlogPostAsync(blogPost);
+
+            //Show the view with a message that the blog post has been created.
+            ViewBag.Success = true;
+
+            return View("PostEdit", blogPostChanges);
         }
 
 
