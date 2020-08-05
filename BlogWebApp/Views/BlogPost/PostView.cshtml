@@ -1,0 +1,11 @@
+﻿@model BlogPostViewViewModel
+
+
+<h1 class="mt-5 h3">@Model.Title</h1>
+@if (User.IsInRole("Admin"))
+{
+    <a href="/post/edit/@Model.PostId">edit</a>
+}
+<p>
+    @Html.Raw(Model.Content)
+</p>

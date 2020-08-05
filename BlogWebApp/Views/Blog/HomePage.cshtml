@@ -12,10 +12,10 @@
 
 @foreach (var bp in Model.BlogPostsMostRecent)
 {
-    <h3 class="mt-5">@bp.Title</h3>
+    <h3 class="mt-5"><a class="text-dark" href="/post/@bp.PostId">@bp.Title</a></h3>
     @if (User.IsInRole("Admin"))
     {
-        <a href="/post/@bp.PostId">edit</a>
+        <a href="/post/edit/@bp.PostId">edit</a>
     }
     <p>
         @Html.Raw(bp.Content)

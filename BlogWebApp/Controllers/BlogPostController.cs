@@ -25,6 +25,25 @@ namespace BlogWebApp.Controllers
             _blogDbService = blogDbService;
         }
 
+        [Route("post/{postId}")]
+        public async Task<IActionResult> PostView(string postId)
+        {
+            var bp = await _blogDbService.GetBlogPostAsync(postId);
+
+            if (bp == null)
+            {
+                return View("PostNotFound");
+            }
+
+            var m = new BlogPostViewViewModel
+            {
+                PostId = bp.PostId,
+                Title = bp.Title,
+                Content = bp.Content
+            };
+            return View(m);
+        }
+
 
         [Route("post/new")]
         [Authorize("RequireAdmin")]
@@ -41,7 +60,7 @@ namespace BlogWebApp.Controllers
 
 
 
-        [Route("post/{postId}")]
+        [Route("post/edit/{postId}")]
         [Authorize("RequireAdmin")]
         public async Task<IActionResult> PostEdit(string postId)
         {
@@ -92,7 +111,7 @@ namespace BlogWebApp.Controllers
         }
 
 
-        [Route("post/{postId}")]
+        [Route("post/edit/{postId}")]
         [Authorize("RequireAdmin")]
         [HttpPost]
         public async Task<IActionResult> PostEdit(string postId, BlogPostEditViewModel blogPostChanges)
