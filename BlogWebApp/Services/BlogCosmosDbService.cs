@@ -63,6 +63,22 @@ namespace BlogWebApp.Services
         }
 
 
+
+        public async Task CreateBlogPostCommentAsync(BlogPostComment comment)
+        {
+            //string str = JsonConvert.SerializeObject(comment);
+            //dynamic obj = JsonConvert.DeserializeObject(str);
+
+            var obj = new dynamic[] { comment.PostId, comment };
+
+            //var result = await _blogDbService.GetContainer("database", "container").Scripts.ExecuteStoredProcedureAsync<string>("spCreateToDoItem", new PartitionKey("Personal"), newItem);
+            var result = await _postsContainer.Scripts.ExecuteStoredProcedureAsync<string>("createComment", new PartitionKey(comment.PostId), obj);
+            //await this._postsContainer.CreateItemAsync<BlogPostComment>(comment, new PartitionKey(comment.PostId));
+        }
+
+
+
+
         public async Task CreateUserAsync(BlogUser user)
         {
 

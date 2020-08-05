@@ -141,5 +141,37 @@ namespace BlogWebApp.Controllers
         }
 
 
+
+        [Route("post/{postId}/comment/new")]
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> PostCommentNew(string postId, string comment)
+        {
+
+            if (!string.IsNullOrWhiteSpace(comment))
+            {
+                var bp = await _blogDbService.GetBlogPostAsync(postId);
+
+                if (bp != null)
+                {
+                    var blogPostComment = new BlogPostComment
+                    {
+                        CommentId = Guid.NewGuid().ToString(),
+                        PostId = postId,
+                        CommentContent = comment,
+
+                        CommentAuthorId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value,
+                        CommentAuthorUsername = User.Identity.Name,
+                        CommentDateCreated = DateTime.UtcNow
+                    };
+
+                    await _blogDbService.CreateBlogPostCommentAsync(blogPostComment);
+                }
+            }
+
+            return RedirectToAction("PostView", new { postId = postId});
+        }
+
+
     }
 }

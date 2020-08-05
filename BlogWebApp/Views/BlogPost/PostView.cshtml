@@ -9,3 +9,27 @@
 <p>
     @Html.Raw(Model.Content)
 </p>
+
+
+<h4>Comments</h4>
+
+<p>List of comments...</p>
+
+
+@if (User.Identity.IsAuthenticated)
+{
+    using (Html.BeginForm("PostCommentNew", "BlogPost", new { postId = Model.PostId }))
+    {
+
+        <div class="form-group">
+            <label for="comment" class="h5">Add New Comment</label>
+            <textarea rows="5" class="form-control" id="comment" name="comment" style="resize:vertical;"></textarea>
+            <small id="commentHelp" class="form-text text-muted">You can add a comment to this blog post.</small>
+        </div>
+
+        <div>
+            <button class="btn btn-outline-dark">Save Comment</button>
+        </div>
+    }
+
+}
