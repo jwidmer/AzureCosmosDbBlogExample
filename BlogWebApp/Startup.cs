@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BlogWebApp.Services;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Fluent;
+using Microsoft.Azure.Cosmos.Scripts;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -122,9 +124,38 @@ namespace BlogWebApp
             await database.Database.CreateContainerIfNotExistsAsync("Posts", "/postId");
 
 
+            //Upsert the sprocs in the posts container.
+            var postsContainer = database.Database.GetContainer("Posts");
+
+            string scriptFileName = @"CosmosDbScripts\sprocs\createComment.js";
+            string scriptId = Path.GetFileNameWithoutExtension(scriptFileName);
+            if (await StoredProcedureExists(postsContainer, scriptId))
+            {
+                await postsContainer.Scripts.ReplaceStoredProcedureAsync(new StoredProcedureProperties(scriptId, File.ReadAllText(scriptFileName)));
+            }
+            else
+            {
+                await postsContainer.Scripts.CreateStoredProcedureAsync(new StoredProcedureProperties(scriptId, File.ReadAllText(scriptFileName)));
+            }
+
+
             return blogCosmosDbService;
         }
 
+        private static async Task<bool> StoredProcedureExists(Container container, string sprocId)
+        {
+            Scripts cosmosScripts = container.Scripts;
+
+            try
+            {
+                StoredProcedureResponse sproc = await cosmosScripts.ReadStoredProcedureAsync(sprocId);
+                return true;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return false;
+            }
+        }
 
     }
 }
