@@ -1,4 +1,7 @@
 ﻿
+using BlogWebApp.Models;
+using System.Collections.Generic;
+
 namespace BlogWebApp.ViewModels
 {
     public class BlogPostViewViewModel
@@ -9,5 +12,7 @@ namespace BlogWebApp.ViewModels
 
         public string Content { get; set; }
 
+
+        public List<BlogPostComment> Comments { get; set; }
     }
 }

@@ -35,11 +35,14 @@ namespace BlogWebApp.Controllers
                 return View("PostNotFound");
             }
 
+            var comments = await _blogDbService.GetBlogPostCommentsAsync(postId);
+
             var m = new BlogPostViewViewModel
             {
                 PostId = bp.PostId,
                 Title = bp.Title,
-                Content = bp.Content
+                Content = bp.Content,
+                Comments = comments
             };
             return View(m);
         }

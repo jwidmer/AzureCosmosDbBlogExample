@@ -76,6 +76,24 @@ namespace BlogWebApp.Services
             //await this._postsContainer.CreateItemAsync<BlogPostComment>(comment, new PartitionKey(comment.PostId));
         }
 
+        public async Task<List<BlogPostComment>> GetBlogPostCommentsAsync(string postId)
+        {
+            var queryString = $"SELECT * FROM p WHERE p.type='comment' AND p.postId = @PostId ORDER BY p.dateCreated DESC";
+
+            var queryDef = new QueryDefinition(queryString);
+            queryDef.WithParameter("@PostId", postId);
+            var query = this._postsContainer.GetItemQueryIterator<BlogPostComment>(queryDef);
+
+            List<BlogPostComment> comments = new List<BlogPostComment>();
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+                var ru = response.RequestCharge;
+                comments.AddRange(response.ToList());
+            }
+
+            return comments;
+        }
 
 
 

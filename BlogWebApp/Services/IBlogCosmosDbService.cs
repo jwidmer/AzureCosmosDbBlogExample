@@ -14,6 +14,7 @@ namespace BlogWebApp.Services
         Task UpsertBlogPostAsync(BlogPost post);
 
         Task CreateBlogPostCommentAsync(BlogPostComment comment);
+        Task<List<BlogPostComment>> GetBlogPostCommentsAsync(string postId);
 
         Task CreateUserAsync(BlogUser user);
         Task<BlogUser> GetUserAsync(string username);

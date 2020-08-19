@@ -11,9 +11,18 @@
 </p>
 
 
-<h4>Comments</h4>
+@if (Model.Comments.Any())
+{
+    <h4>Comments</h4>
 
-<p>List of comments...</p>
+    @foreach (var comment in Model.Comments)
+    {
+        <div>
+            <span class="small">@comment.CommentDateCreated.ToShortDateString() @comment.CommentDateCreated.ToShortTimeString() - @comment.CommentAuthorUsername</span>
+            <p><i>@comment.CommentContent</i></p>
+        </div>
+    }
+}
 
 
 @if (User.Identity.IsAuthenticated)
