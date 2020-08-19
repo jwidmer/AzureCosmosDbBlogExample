@@ -42,6 +42,7 @@ namespace BlogWebApp.Controllers
                 PostId = bp.PostId,
                 Title = bp.Title,
                 Content = bp.Content,
+                CommentCount = bp.CommentCount,
                 Comments = comments
             };
             return View(m);

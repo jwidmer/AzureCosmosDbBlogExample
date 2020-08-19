@@ -12,6 +12,7 @@ namespace BlogWebApp.ViewModels
 
         public string Content { get; set; }
 
+        public int CommentCount { get; set; }
 
         public List<BlogPostComment> Comments { get; set; }
     }

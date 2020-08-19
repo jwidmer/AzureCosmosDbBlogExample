@@ -13,6 +13,7 @@
 @foreach (var bp in Model.BlogPostsMostRecent)
 {
     <h3 class="mt-5"><a class="text-dark" href="/post/@bp.PostId">@bp.Title</a></h3>
+    <a href="/post/@bp.PostId#comments" class="badge badge-pill badge-secondary">@bp.CommentCount Comment@(bp.CommentCount == 1 ? "" : "s")</a>
     @if (User.IsInRole("Admin"))
     {
         <a href="/post/edit/@bp.PostId">edit</a>

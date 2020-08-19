@@ -13,7 +13,7 @@
 
 @if (Model.Comments.Any())
 {
-    <h4>Comments</h4>
+    <h4 id="comments">Comments (@Model.Comments.Count)</h4>
 
     @foreach (var comment in Model.Comments)
     {
