@@ -127,20 +127,26 @@ namespace BlogWebApp
             //Upsert the sprocs in the posts container.
             var postsContainer = database.Database.GetContainer("Posts");
 
-            string scriptFileName = @"CosmosDbScripts\sprocs\createComment.js";
-            string scriptId = Path.GetFileNameWithoutExtension(scriptFileName);
-            if (await StoredProcedureExists(postsContainer, scriptId))
-            {
-                await postsContainer.Scripts.ReplaceStoredProcedureAsync(new StoredProcedureProperties(scriptId, File.ReadAllText(scriptFileName)));
-            }
-            else
-            {
-                await postsContainer.Scripts.CreateStoredProcedureAsync(new StoredProcedureProperties(scriptId, File.ReadAllText(scriptFileName)));
-            }
-
+            await UpsertStoredProcedureAsync(postsContainer, @"CosmosDbScripts\sprocs\createComment.js");
+            await UpsertStoredProcedureAsync(postsContainer, @"CosmosDbScripts\sprocs\createLike.js");
 
             return blogCosmosDbService;
         }
+
+        private static async Task UpsertStoredProcedureAsync(Container container, string scriptFileName)
+        {
+            string scriptId = Path.GetFileNameWithoutExtension(scriptFileName);
+            if (await StoredProcedureExists(container, scriptId))
+            {
+                await container.Scripts.ReplaceStoredProcedureAsync(new StoredProcedureProperties(scriptId, File.ReadAllText(scriptFileName)));
+            }
+            else
+            {
+                await container.Scripts.CreateStoredProcedureAsync(new StoredProcedureProperties(scriptId, File.ReadAllText(scriptFileName)));
+            }
+
+        }
+
 
         private static async Task<bool> StoredProcedureExists(Container container, string sprocId)
         {
