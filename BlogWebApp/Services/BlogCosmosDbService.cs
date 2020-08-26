@@ -107,6 +107,49 @@ namespace BlogWebApp.Services
             var result = await _postsContainer.Scripts.ExecuteStoredProcedureAsync<string>("createLike", new PartitionKey(like.PostId), obj);
             //await this._postsContainer.CreateItemAsync<BlogPostComment>(comment, new PartitionKey(comment.PostId));
         }
+        public async Task DeleteBlogPostLikeAsync(string postId, string likeId)
+        {
+            await _postsContainer.DeleteItemAsync<BlogPostLike>(likeId, new PartitionKey(postId));
+        }
+
+        public async Task<List<BlogPostLike>> GetBlogPostLikesAsync(string postId)
+        {
+            var queryString = $"SELECT * FROM p WHERE p.type='like' AND p.postId = @PostId ORDER BY p.dateCreated DESC";
+
+            var queryDef = new QueryDefinition(queryString);
+            queryDef.WithParameter("@PostId", postId);
+            var query = this._postsContainer.GetItemQueryIterator<BlogPostLike>(queryDef);
+
+            List<BlogPostLike> likes = new List<BlogPostLike>();
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+                var ru = response.RequestCharge;
+                likes.AddRange(response.ToList());
+            }
+
+            return likes;
+        }
+
+        public async Task<BlogPostLike> GetBlogPostLikeForUserIdAsync(string postId, string userId)
+        {
+            var queryString = $"SELECT TOP 1 * FROM p WHERE p.type='like' AND p.postId = @PostId AND p.userId = @UserId ORDER BY p.dateCreated DESC";
+
+            var queryDef = new QueryDefinition(queryString);
+            queryDef.WithParameter("@PostId", postId);
+            queryDef.WithParameter("@UserId", userId);
+            var query = this._postsContainer.GetItemQueryIterator<BlogPostLike>(queryDef);
+
+            BlogPostLike like = null;
+            if (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+                var ru = response.RequestCharge;
+                like = response.FirstOrDefault();
+            }
+
+            return like;
+        }
 
 
         public async Task CreateUserAsync(BlogUser user)

@@ -37,13 +37,23 @@ namespace BlogWebApp.Controllers
 
             var comments = await _blogDbService.GetBlogPostCommentsAsync(postId);
 
+            var userLikedPost = false;
+
+            if (User.Identity.IsAuthenticated)
+            {
+                var userId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value;
+                var like = await _blogDbService.GetBlogPostLikeForUserIdAsync(postId, userId);
+                userLikedPost = like != null;
+            }
+
             var m = new BlogPostViewViewModel
             {
                 PostId = bp.PostId,
                 Title = bp.Title,
                 Content = bp.Content,
                 CommentCount = bp.CommentCount,
-                Comments = comments
+                Comments = comments,
+                UserLikedPost = userLikedPost
             };
             return View(m);
         }
@@ -177,10 +187,10 @@ namespace BlogWebApp.Controllers
         }
 
 
-        [Route("post/{postId}/like/new")]
+        [Route("post/{postId}/like")]
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> PostLikeNew(string postId)
+        public async Task<IActionResult> PostLike(string postId)
         {
 
             var bp = await _blogDbService.GetBlogPostAsync(postId);
@@ -200,6 +210,28 @@ namespace BlogWebApp.Controllers
                 };
 
                 await _blogDbService.CreateBlogPostLikeAsync(blogPostLike);
+            }
+
+            return RedirectToAction("PostView", new { postId = postId });
+        }
+
+        [Route("post/{postId}/unlike")]
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> PostUnlike(string postId)
+        {
+
+            var bp = await _blogDbService.GetBlogPostAsync(postId);
+
+            if (bp != null)
+            {
+                var userId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value;
+                var like = await _blogDbService.GetBlogPostLikeForUserIdAsync(postId, userId);
+
+                if (like != null)
+                {
+                    await _blogDbService.DeleteBlogPostLikeAsync(like.PostId, like.LikeId);
+                }
             }
 
             return RedirectToAction("PostView", new { postId = postId });

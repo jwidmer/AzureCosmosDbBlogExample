@@ -6,9 +6,19 @@
         @Model.Title
         @if (User.Identity.IsAuthenticated)
         {
-            using (Html.BeginForm("PostLikeNew", "BlogPost", new { postId = Model.PostId }))
+            if (Model.UserLikedPost)
             {
-                <button class="btn btn-primary btn-sm">Like Post!</button>
+                using (Html.BeginForm("PostUnlike", "BlogPost", new { postId = Model.PostId }))
+                {
+                    <button class="btn btn-primary btn-sm">Unlike</button>
+                }
+            }
+            else
+            {
+                using (Html.BeginForm("PostLike", "BlogPost", new { postId = Model.PostId }))
+                {
+                    <button class="btn btn-outline-primary btn-sm">Like</button>
+                }
             }
         }
     </h1>

@@ -18,6 +18,9 @@ namespace BlogWebApp.Services
 
 
         Task CreateBlogPostLikeAsync(BlogPostLike like);
+        Task DeleteBlogPostLikeAsync(string postId, string likeId);
+        Task<List<BlogPostLike>> GetBlogPostLikesAsync(string postId);
+        Task<BlogPostLike> GetBlogPostLikeForUserIdAsync(string postId, string userId);
 
 
         Task CreateUserAsync(BlogUser user);

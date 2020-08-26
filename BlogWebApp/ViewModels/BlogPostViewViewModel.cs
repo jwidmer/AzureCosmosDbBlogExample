@@ -14,6 +14,8 @@ namespace BlogWebApp.ViewModels
 
         public int CommentCount { get; set; }
 
+        public bool UserLikedPost { get; set; }
+
         public List<BlogPostComment> Comments { get; set; }
     }
 }
