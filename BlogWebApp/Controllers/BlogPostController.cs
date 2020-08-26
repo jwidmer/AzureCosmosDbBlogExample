@@ -177,5 +177,33 @@ namespace BlogWebApp.Controllers
         }
 
 
+        [Route("post/{postId}/like/new")]
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> PostLikeNew(string postId)
+        {
+
+            var bp = await _blogDbService.GetBlogPostAsync(postId);
+
+            //TODO: Check that this user has not already liked this post
+
+            if (bp != null)
+            {
+                var blogPostLike = new BlogPostLike
+                {
+                    LikeId = Guid.NewGuid().ToString(),
+                    PostId = postId,
+
+                    LikeAuthorId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value,
+                    LikeAuthorUsername = User.Identity.Name,
+                    LikeDateCreated = DateTime.UtcNow
+                };
+
+                await _blogDbService.CreateBlogPostLikeAsync(blogPostLike);
+            }
+
+            return RedirectToAction("PostView", new { postId = postId });
+        }
+
     }
 }

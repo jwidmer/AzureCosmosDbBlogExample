@@ -13,7 +13,7 @@
                 function (err) {
                     if (err) throw err;
 
-                    comment.postId = postId;
+                    //like.postId = postId;
                     collection.createDocument(
                         collection.getSelfLink(),
                         like

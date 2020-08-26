@@ -1,7 +1,19 @@
 ﻿@model BlogPostViewViewModel
 
 
-<h1 class="mt-5 h3">@Model.Title</h1>
+<div>
+    <h1 class="mt-5 h3">
+        @Model.Title
+        @if (User.Identity.IsAuthenticated)
+        {
+            using (Html.BeginForm("PostLikeNew", "BlogPost", new { postId = Model.PostId }))
+            {
+                <button class="btn btn-primary btn-sm">Like Post!</button>
+            }
+        }
+    </h1>
+</div>
+
 @if (User.IsInRole("Admin"))
 {
     <a href="/post/edit/@Model.PostId">edit</a>

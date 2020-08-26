@@ -16,6 +16,10 @@ namespace BlogWebApp.Services
         Task CreateBlogPostCommentAsync(BlogPostComment comment);
         Task<List<BlogPostComment>> GetBlogPostCommentsAsync(string postId);
 
+
+        Task CreateBlogPostLikeAsync(BlogPostLike like);
+
+
         Task CreateUserAsync(BlogUser user);
         Task<BlogUser> GetUserAsync(string username);
 
