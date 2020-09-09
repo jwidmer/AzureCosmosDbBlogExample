@@ -183,7 +183,7 @@ namespace BlogWebApp.Controllers
                 }
             }
 
-            return RedirectToAction("PostView", new { postId = postId});
+            return RedirectToAction("PostView", new { postId = postId });
         }
 
 
@@ -195,21 +195,27 @@ namespace BlogWebApp.Controllers
 
             var bp = await _blogDbService.GetBlogPostAsync(postId);
 
-            //TODO: Check that this user has not already liked this post
-
             if (bp != null)
             {
-                var blogPostLike = new BlogPostLike
+
+                //Check that this user has not already liked this post
+                var userId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value;
+                var like = await _blogDbService.GetBlogPostLikeForUserIdAsync(postId, userId);
+
+                if (like == null)
                 {
-                    LikeId = Guid.NewGuid().ToString(),
-                    PostId = postId,
+                    var blogPostLike = new BlogPostLike
+                    {
+                        LikeId = Guid.NewGuid().ToString(),
+                        PostId = postId,
 
-                    LikeAuthorId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value,
-                    LikeAuthorUsername = User.Identity.Name,
-                    LikeDateCreated = DateTime.UtcNow
-                };
+                        LikeAuthorId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value,
+                        LikeAuthorUsername = User.Identity.Name,
+                        LikeDateCreated = DateTime.UtcNow
+                    };
 
-                await _blogDbService.CreateBlogPostLikeAsync(blogPostLike);
+                    await _blogDbService.CreateBlogPostLikeAsync(blogPostLike);
+                }
             }
 
             return RedirectToAction("PostView", new { postId = postId });
