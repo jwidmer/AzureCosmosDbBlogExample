@@ -53,7 +53,8 @@ namespace BlogWebApp.Controllers
                 Content = bp.Content,
                 CommentCount = bp.CommentCount,
                 Comments = comments,
-                UserLikedPost = userLikedPost
+                UserLikedPost = userLikedPost,
+                LikeCount = bp.LikeCount
             };
             return View(m);
         }

@@ -4,24 +4,27 @@
 <div>
     <h1 class="mt-5 h3">
         @Model.Title
-        @if (User.Identity.IsAuthenticated)
+        <span class="badge badge-pill badge-secondary">@Model.LikeCount Like@(Model.LikeCount == 1 ? "" : "s")</span>
+    </h1>
+
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        if (Model.UserLikedPost)
         {
-            if (Model.UserLikedPost)
+            using (Html.BeginForm("PostUnlike", "BlogPost", new { postId = Model.PostId }))
             {
-                using (Html.BeginForm("PostUnlike", "BlogPost", new { postId = Model.PostId }))
-                {
-                    <button class="btn btn-primary btn-sm">Unlike</button>
-                }
-            }
-            else
-            {
-                using (Html.BeginForm("PostLike", "BlogPost", new { postId = Model.PostId }))
-                {
-                    <button class="btn btn-outline-primary btn-sm">Like</button>
-                }
+                <button class="btn btn-primary btn-sm">Unlike</button>
             }
         }
-    </h1>
+        else
+        {
+            using (Html.BeginForm("PostLike", "BlogPost", new { postId = Model.PostId }))
+            {
+                <button class="btn btn-outline-primary btn-sm">Like</button>
+            }
+        }
+    }
 </div>
 
 @if (User.IsInRole("Admin"))
