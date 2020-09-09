@@ -226,12 +226,7 @@ namespace BlogWebApp.Controllers
             if (bp != null)
             {
                 var userId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value;
-                var like = await _blogDbService.GetBlogPostLikeForUserIdAsync(postId, userId);
-
-                if (like != null)
-                {
-                    await _blogDbService.DeleteBlogPostLikeAsync(like.PostId, like.LikeId);
-                }
+                await _blogDbService.DeleteBlogPostLikeAsync(postId, userId);
             }
 
             return RedirectToAction("PostView", new { postId = postId });

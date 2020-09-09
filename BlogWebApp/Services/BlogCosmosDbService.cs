@@ -107,9 +107,10 @@ namespace BlogWebApp.Services
             var result = await _postsContainer.Scripts.ExecuteStoredProcedureAsync<string>("createLike", new PartitionKey(like.PostId), obj);
             //await this._postsContainer.CreateItemAsync<BlogPostComment>(comment, new PartitionKey(comment.PostId));
         }
-        public async Task DeleteBlogPostLikeAsync(string postId, string likeId)
+        public async Task DeleteBlogPostLikeAsync(string postId, string userId)
         {
-            await _postsContainer.DeleteItemAsync<BlogPostLike>(likeId, new PartitionKey(postId));
+            var obj = new dynamic[] { postId, userId };
+            var result = await _postsContainer.Scripts.ExecuteStoredProcedureAsync<string>("deleteLike", new PartitionKey(postId), obj);
         }
 
         public async Task<List<BlogPostLike>> GetBlogPostLikesAsync(string postId)
