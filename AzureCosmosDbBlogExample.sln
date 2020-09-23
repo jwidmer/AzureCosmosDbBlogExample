@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogWebApp", "BlogWebApp\BlogWebApp.csproj", "{4CBC1BD5-96F3-4BE7-81D6-EDCFA58E826E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogWebApp", "BlogWebApp\BlogWebApp.csproj", "{4CBC1BD5-96F3-4BE7-81D6-EDCFA58E826E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogFunctionApp", "BlogFunctionApp\BlogFunctionApp.csproj", "{E2C38561-7320-4CEA-9004-0E18513DC87D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{4CBC1BD5-96F3-4BE7-81D6-EDCFA58E826E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CBC1BD5-96F3-4BE7-81D6-EDCFA58E826E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CBC1BD5-96F3-4BE7-81D6-EDCFA58E826E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2C38561-7320-4CEA-9004-0E18513DC87D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2C38561-7320-4CEA-9004-0E18513DC87D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2C38561-7320-4CEA-9004-0E18513DC87D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2C38561-7320-4CEA-9004-0E18513DC87D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
