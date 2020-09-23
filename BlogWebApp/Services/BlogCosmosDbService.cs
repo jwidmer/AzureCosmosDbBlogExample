@@ -186,6 +186,37 @@ namespace BlogWebApp.Services
 
         }
 
+        public async Task UpdateUsernameAsync(BlogUser userWithUpdatedUsername, string oldUsername)
+        {
+            //first try to create the username in the partition with partitionKey "unique_username" to confirm the username does not exist already
+            var uniqueUsername = new UniqueUsername { Username = userWithUpdatedUsername.Username };
+
+            //First create a user with a partitionkey as "unique_username" and the new username.  Using the same partitionKey "unique_username" will put all of the username in the same logical partition.
+            //  Since there is a Unique Key on /username (per logical partition), trying to insert a duplicate username with partition key "unique_username" will cause a Conflict.
+            //  See this question/answer https://stackoverflow.com/a/62438454/21579
+            await _usersContainer.CreateItemAsync<UniqueUsername>(uniqueUsername, new PartitionKey(uniqueUsername.UserId));
+
+            //if we get past adding a new username for partition key "unique_username", then go ahead and update this user's username
+            await _usersContainer.ReplaceItemAsync<BlogUser>(userWithUpdatedUsername, userWithUpdatedUsername.UserId, new PartitionKey(userWithUpdatedUsername.UserId));
+
+            //then we need to delete the old "unique_username" for the username that just changed.
+            var queryDefinition = new QueryDefinition("SELECT * FROM u WHERE u.userId = 'unique_username' AND u.type = 'unique_username' AND u.username = @username").WithParameter("@username", oldUsername);
+            var query = this._usersContainer.GetItemQueryIterator<BlogUniqueUsername>(queryDefinition);
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+
+                var oldUniqueUsernames = response.ToList();
+
+                foreach (var oldUniqueUsername in oldUniqueUsernames)
+                {
+                    //Last delete the old unique username entry
+                    await _usersContainer.DeleteItemAsync<BlogUser>(oldUniqueUsername.Id, new PartitionKey("unique_username"));
+                }
+            }
+
+        }
+
 
         public async Task<BlogUser> GetUserAsync(string username)
         {
@@ -204,7 +235,7 @@ namespace BlogWebApp.Services
 
             if (results.Count > 1)
             {
-                throw new Exception($"More than one user fround for username '{username}'");
+                throw new Exception($"More than one user found for username '{username}'");
             }
 
             var u = results.SingleOrDefault();

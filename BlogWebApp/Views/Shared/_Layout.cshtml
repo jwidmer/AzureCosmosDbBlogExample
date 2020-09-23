@@ -24,8 +24,14 @@
                                 <p class="navbar-text text-dark"><span class="d-sm-none d-md-inline">Signed in as </span>@User.Identity.Name</p>
                                 <p class="navbar-text text-dark d-none d-sm-none d-md-inline">|</p>
                             </li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="BlogPost" asp-action="PostNew">New <span class="d-sm-none d-md-inline">Blog </span>Post</a>
+                                </li>
+                            }
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="BlogPost" asp-action="PostNew">New <span class="d-sm-none d-md-inline">Blog </span>Post</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="UserProfile">My Profile</a>
                             </li>
                             <li class="nav-item">
                                 <form class="form-inline" asp-controller="Account" asp-action="Logout">

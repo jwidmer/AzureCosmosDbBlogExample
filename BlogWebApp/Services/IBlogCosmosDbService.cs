@@ -24,6 +24,8 @@ namespace BlogWebApp.Services
 
 
         Task CreateUserAsync(BlogUser user);
+        Task UpdateUsernameAsync(BlogUser userWithUpdatedUsername, string oldUsername);
+
         Task<BlogUser> GetUserAsync(string username);
 
     }

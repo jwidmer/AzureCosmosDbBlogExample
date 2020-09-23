@@ -1,0 +1,28 @@
+﻿@model UserProfileViewModel
+@using Microsoft.AspNetCore.Mvc.ModelBinding
+
+<div class="container-sm">
+    <h2>Profile</h2>
+    <hr />
+
+    @using (Html.BeginForm())
+    {
+        <div class="form-group">
+            <label for="title" class="h5">Username</label> <span asp-validation-for="NewUsername" class="text-danger"></span>
+            <input type="text" class="form-control @(ViewData.ModelState.Any(p => p.Key == "NewUsername" && p.Value.ValidationState == ModelValidationState.Invalid) ? "is-invalid" : "")" id="newUsername" name="newUsername" value="@Model.NewUsername">
+        </div>
+
+        <div class="mt-5">
+            <button class="btn btn-primary">Save</button>
+            <a href="/user" class="btn btn-light">Cancel</a>
+        </div>
+
+        @if (ViewBag.Success != null && ViewBag.Success)
+        {
+            <div class="alert alert-success mt-3">
+                Your profile has been updated!
+            </div>
+        }
+    }
+
+</div>
