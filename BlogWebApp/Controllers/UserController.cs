@@ -10,6 +10,7 @@ using BlogWebApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using BlogWebApp.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 namespace BlogWebApp.Controllers
 {
@@ -49,15 +50,21 @@ namespace BlogWebApp.Controllers
 
             var oldUsername = User.Identity.Name;
 
-            //Update username
-            var u = await _blogDbService.GetUserAsync(oldUsername);
+            if (newUsername != oldUsername)
+            {
+                //Update username
+                var u = await _blogDbService.GetUserAsync(oldUsername);
 
-            //set the new username on the user object.
-            u.Username = newUsername;
+                //set the new username on the user object.
+                u.Username = newUsername;
 
-            await _blogDbService.UpdateUsernameAsync(u, oldUsername);
+                await _blogDbService.UpdateUsernameAsync(u, oldUsername);
 
-            ViewBag.Success = true;
+                //log out user and let them log in as the new username
+                await HttpContext.SignOutAsync();
+
+                ViewBag.Success = true;
+            }
 
             var m = new UserProfileViewModel
             {
