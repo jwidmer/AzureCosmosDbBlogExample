@@ -55,7 +55,7 @@ namespace BlogWebApp.Controllers
             //set the new username on the user object.
             u.Username = newUsername;
 
-            await _blogDbService.UpdateUserNameAsync(u, oldUsername);
+            await _blogDbService.UpdateUsernameAsync(u, oldUsername);
 
             ViewBag.Success = true;
 
