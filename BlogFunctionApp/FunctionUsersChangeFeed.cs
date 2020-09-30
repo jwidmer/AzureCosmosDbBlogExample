@@ -15,14 +15,14 @@ namespace BlogFunctionApp
             collectionName: "Users",
             ConnectionStringSetting = "CosmosDbBlogConnectionString",
             LeaseCollectionName = "Leases",
-            CreateLeaseCollectionIfNotExists = true )]IReadOnlyList<Document> input, ILogger log)
+            CreateLeaseCollectionIfNotExists = true )]IReadOnlyList<Document> documents, ILogger log)
         {
-            if (input != null && input.Count > 0)
+            if (documents != null && documents.Count > 0)
             {
-                log.LogInformation("Documents modified " + input.Count);
-                log.LogInformation("First document Id " + input[0].Id);
+                log.LogInformation("Documents modified " + documents.Count);
+                log.LogInformation("First document Id " + documents[0].Id);
 
-                foreach (var d in input)
+                foreach (var d in documents)
                 {
 
                     var userId = d.GetPropertyValue<string>("userId");
