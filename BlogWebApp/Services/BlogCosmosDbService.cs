@@ -163,6 +163,8 @@ namespace BlogWebApp.Services
             //  This question/answer https://stackoverflow.com/a/62438454/21579
             await _usersContainer.CreateItemAsync<UniqueUsername>(uniqueUsername, new PartitionKey(uniqueUsername.UserId));
 
+            user.Action = "Create";
+
             //if we get past adding a new username for partition key "unique_username", then go ahead and insert the new user.
             await _usersContainer.CreateItemAsync<BlogUser>(user, new PartitionKey(user.UserId));
             //await _usersContainer.CreateItemAsync<BlogUser>(user, new PartitionKey(user.UserId), new ItemRequestOptions { PreTriggers = new List<string> { "validateUserUsernameNotExists" } });
@@ -195,6 +197,8 @@ namespace BlogWebApp.Services
             //  Since there is a Unique Key on /username (per logical partition), trying to insert a duplicate username with partition key "unique_username" will cause a Conflict.
             //  See this question/answer https://stackoverflow.com/a/62438454/21579
             await _usersContainer.CreateItemAsync<UniqueUsername>(uniqueUsername, new PartitionKey(uniqueUsername.UserId));
+
+            userWithUpdatedUsername.Action = "Update";
 
             //if we get past adding a new username for partition key "unique_username", then go ahead and update this user's username
             await _usersContainer.ReplaceItemAsync<BlogUser>(userWithUpdatedUsername, userWithUpdatedUsername.UserId, new PartitionKey(userWithUpdatedUsername.UserId));

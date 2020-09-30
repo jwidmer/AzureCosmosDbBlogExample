@@ -36,6 +36,10 @@ namespace BlogWebApp.Models
         public string Username { get; set; }
 
 
+        [JsonProperty(PropertyName = "action")]
+        public string Action { get; set; }
+
+
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);

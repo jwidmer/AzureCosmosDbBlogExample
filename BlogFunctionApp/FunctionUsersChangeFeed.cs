@@ -28,6 +28,7 @@ namespace BlogFunctionApp
                     var userId = d.GetPropertyValue<string>("userId");
                     var type = d.GetPropertyValue<string>("type");
                     var username = d.GetPropertyValue<string>("username");
+                    var action = d.GetPropertyValue<string>("action");
 
                     //do not process any changes to the unique_username items.
                     if (type == "unique_username")
@@ -35,8 +36,13 @@ namespace BlogFunctionApp
                         continue;
                     }
 
+                    //do not process inserts
+                    if (action == "Create")
+                    {
+                        continue;
+                    }
+
                     //since the only change to the Users item is for the username, assume
-                    //TODO: do not process inserts
 
                     //This operation is costly because it requires this stored procedure to be executed on every partition of the posts container.
                     //We assume that most users choose a suitable username during sign-up and won't ever change it, so this update will run very rarely.
