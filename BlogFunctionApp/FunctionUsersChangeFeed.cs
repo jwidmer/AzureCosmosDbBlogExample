@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using BlogFunctionApp.Services;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -7,10 +9,17 @@ using Microsoft.Extensions.Logging;
 
 namespace BlogFunctionApp
 {
-    public static class FunctionUsersChangeFeed
+    public class FunctionUsersChangeFeed
     {
+        private readonly IBlogCosmosDbService _blogDbService;
+
+        public FunctionUsersChangeFeed(IBlogCosmosDbService blogDbService)
+        {
+            _blogDbService = blogDbService;
+        }
+
         [FunctionName("UsersChangeFeed")]
-        public static void Run([CosmosDBTrigger(
+        public async Task Run([CosmosDBTrigger(
             databaseName: "MyBlog",
             collectionName: "Users",
             ConnectionStringSetting = "CosmosDbBlogConnectionString",
@@ -42,10 +51,10 @@ namespace BlogFunctionApp
                         continue;
                     }
 
-                    //since the only change to the Users item is for the username, assume
-
-                    //This operation is costly because it requires this stored procedure to be executed on every partition of the posts container.
+                    //This operation is costly because it requires an update on every partition of the posts container.
                     //We assume that most users choose a suitable username during sign-up and won't ever change it, so this update will run very rarely.
+                    await _blogDbService.UpdateUsernameInPostsContainer(userId, username);
+
                 }
             }
         }
