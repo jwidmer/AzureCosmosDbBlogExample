@@ -123,6 +123,9 @@ namespace BlogWebApp
 
             await database.Database.CreateContainerIfNotExistsAsync("Posts", "/postId");
 
+            //posts get upserted into the Feed container from the Change Feed
+            await database.Database.CreateContainerIfNotExistsAsync("Feed", "/type");
+
 
             //Upsert the sprocs in the posts container.
             var postsContainer = database.Database.GetContainer("Posts");

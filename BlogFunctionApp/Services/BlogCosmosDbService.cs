@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,12 @@ namespace BlogFunctionApp.Services
     {
 
         private Container _postsContainer;
+        private Container _feedContainer;
 
         public BlogCosmosDbService(CosmosClient dbClient, string databaseName)
         {
             _postsContainer = dbClient.GetContainer(databaseName, "Posts");
+            _feedContainer = dbClient.GetContainer(databaseName, "Feed");
         }
 
 
@@ -43,11 +46,15 @@ namespace BlogFunctionApp.Services
             foreach (var postId in postIds)
             {
                 var obj = new dynamic[] { userId, newUsername };
-                var result = await _postsContainer.Scripts.ExecuteStoredProcedureAsync<string>("updateUsernames", new PartitionKey(postId), obj);
+                var result = await _postsContainer.Scripts.ExecuteStoredProcedureAsync<string>("updateUsernames", new Microsoft.Azure.Cosmos.PartitionKey(postId), obj);
             }
         }
 
 
+        public async Task UpsertPostToFeedContainerAsync(Document d, string type)
+        {
+            await this._feedContainer.UpsertItemAsync<Document>(d, new Microsoft.Azure.Cosmos.PartitionKey(type));
+        }
 
     }
 }
