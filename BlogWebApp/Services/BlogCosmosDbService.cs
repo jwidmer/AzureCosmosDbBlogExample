@@ -14,11 +14,13 @@ namespace BlogWebApp.Services
 
         private Container _usersContainer;
         private Container _postsContainer;
+        private Container _feedContainer;
 
         public BlogCosmosDbService(CosmosClient dbClient, string databaseName)
         {
             _usersContainer = dbClient.GetContainer(databaseName, "Users");
             _postsContainer = dbClient.GetContainer(databaseName, "Posts");
+            _feedContainer = dbClient.GetContainer(databaseName, "Feed");
         }
 
 
@@ -27,8 +29,8 @@ namespace BlogWebApp.Services
 
             var blogPosts = new List<BlogPost>();
 
-            var queryString = $"SELECT TOP {numberOfPosts} * FROM p WHERE p.type='post' ORDER BY p.dateCreated DESC";
-            var query = _postsContainer.GetItemQueryIterator<BlogPost>(new QueryDefinition(queryString));
+            var queryString = $"SELECT TOP {numberOfPosts} * FROM f WHERE f.type='post' ORDER BY f.dateCreated DESC";
+            var query = _feedContainer.GetItemQueryIterator<BlogPost>(new QueryDefinition(queryString));
             while (query.HasMoreResults)
             {
                 var response = await query.ReadNextAsync();
