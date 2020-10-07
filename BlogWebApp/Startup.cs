@@ -135,6 +135,11 @@ namespace BlogWebApp
             await UpsertStoredProcedureAsync(postsContainer, @"CosmosDbScripts\sprocs\deleteLike.js");
             await UpsertStoredProcedureAsync(postsContainer, @"CosmosDbScripts\sprocs\updateUsernames.js");
 
+
+            //add the feed container post-trigger (for truncated the number of items in the Feed container).
+            var feedContainer = database.Database.GetContainer("Feed");
+            await UpsertTriggerAsync(feedContainer, @"CosmosDbScripts\triggers\truncateFeed.js", TriggerOperation.All, TriggerType.Post);
+
             return blogCosmosDbService;
         }
 
@@ -160,6 +165,37 @@ namespace BlogWebApp
             try
             {
                 StoredProcedureResponse sproc = await cosmosScripts.ReadStoredProcedureAsync(sprocId);
+                return true;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return false;
+            }
+        }
+
+
+        private static async Task UpsertTriggerAsync(Container container, string scriptFileName, TriggerOperation triggerOperation, TriggerType triggerType)
+        {
+            string scriptId = Path.GetFileNameWithoutExtension(scriptFileName);
+            if (await TriggerExists(container, scriptId))
+            {
+                await container.Scripts.ReplaceTriggerAsync(new TriggerProperties { Id = scriptId, Body = File.ReadAllText(scriptFileName), TriggerOperation = triggerOperation, TriggerType = triggerType });
+            }
+            else
+            {
+                await container.Scripts.CreateTriggerAsync(new TriggerProperties { Id = scriptId, Body = File.ReadAllText(scriptFileName), TriggerOperation = triggerOperation, TriggerType = triggerType });
+            }
+
+        }
+
+
+        private static async Task<bool> TriggerExists(Container container, string sprocId)
+        {
+            Scripts cosmosScripts = container.Scripts;
+
+            try
+            {
+                TriggerResponse trigger = await cosmosScripts.ReadTriggerAsync(sprocId);
                 return true;
             }
             catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)

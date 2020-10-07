@@ -53,7 +53,8 @@ namespace BlogFunctionApp.Services
 
         public async Task UpsertPostToFeedContainerAsync(Document d, string type)
         {
-            await this._feedContainer.UpsertItemAsync<Document>(d, new Microsoft.Azure.Cosmos.PartitionKey(type));
+            var requestOptions = new ItemRequestOptions { PostTriggers = new List<string> { "truncateFeed" } };
+            await this._feedContainer.UpsertItemAsync<Document>(d, new Microsoft.Azure.Cosmos.PartitionKey(type), requestOptions);
         }
 
     }
