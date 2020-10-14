@@ -75,5 +75,28 @@ namespace BlogWebApp.Controllers
             return View(m);
         }
 
+
+        [Route("user/{userId}/posts")]
+        public async Task<IActionResult> UserPosts(string userId)
+        {
+            var posts = await _blogDbService.GetBlogPostsForUserId(userId);
+
+            var username = "";
+
+            var firstPost = posts.FirstOrDefault();
+            if (firstPost != null)
+            {
+                username = firstPost.AuthorUsername;
+            }
+
+            var m = new UserPostsViewModel
+            {
+                Username = username,
+                Posts = posts
+            };
+            return View(m);
+        }
+
+
     }
 }

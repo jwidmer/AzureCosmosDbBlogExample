@@ -54,7 +54,9 @@ namespace BlogWebApp.Controllers
                 CommentCount = bp.CommentCount,
                 Comments = comments,
                 UserLikedPost = userLikedPost,
-                LikeCount = bp.LikeCount
+                LikeCount = bp.LikeCount,
+                AuthorId = bp.AuthorId,
+                AuthorUsername = bp.AuthorUsername
             };
             return View(m);
         }

@@ -42,6 +42,29 @@ namespace BlogWebApp.Services
         }
 
 
+        public async Task<List<BlogPost>> GetBlogPostsForUserId(string userId)
+        {
+
+            var blogPosts = new List<BlogPost>();
+
+
+            var queryString = $"SELECT * FROM p WHERE p.type='post' AND p.userId = @UserId ORDER BY p.dateCreated DESC";
+
+            var queryDef = new QueryDefinition(queryString);
+            queryDef.WithParameter("@UserId", userId);
+            var query = this._postsContainer.GetItemQueryIterator<BlogPost>(queryDef);
+
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+                var ru = response.RequestCharge;
+                blogPosts.AddRange(response.ToList());
+            }
+
+            return blogPosts;
+        }
+
+
         public async Task<BlogPost> GetBlogPostAsync(string postId)
         {
             try

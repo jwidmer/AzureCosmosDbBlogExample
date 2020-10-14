@@ -10,6 +10,8 @@ namespace BlogWebApp.Services
     {
 
         Task<List<BlogPost>> GetBlogPostsMostRecentAsync(int numberOfPosts);
+        Task<List<BlogPost>> GetBlogPostsForUserId(string userId);
+
         Task<BlogPost> GetBlogPostAsync(string postId);
         Task UpsertBlogPostAsync(BlogPost post);
 

@@ -1,16 +1,19 @@
-﻿@model BlogHomePageViewModel
+﻿@model UserPostsViewModel
 
 
-<h1>My Azure Cosmos DB Blog Sample Home Page</h1>
 
 
-@if (!Model.BlogPostsMostRecent.Any())
+@if (!Model.Posts.Any())
 {
-    <div class="alert alert-info">There are no posts in this blog.</div>
+    <div class="alert alert-info">There are no posts in this blog for this user.</div>
+}
+else
+{
+    <h1>Posts for user @Model.Username.</h1>
 }
 
 
-@foreach (var bp in Model.BlogPostsMostRecent)
+@foreach (var bp in Model.Posts)
 {
     <h3 class="mt-5"><a class="text-dark" href="/post/@bp.PostId">@bp.Title</a></h3>
     <a href="/post/@bp.PostId#comments" class="badge badge-pill badge-secondary">@bp.CommentCount Comment@(bp.CommentCount == 1 ? "" : "s")</a>
