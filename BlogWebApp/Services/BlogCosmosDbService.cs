@@ -52,7 +52,7 @@ namespace BlogWebApp.Services
 
             var queryDef = new QueryDefinition(queryString);
             queryDef.WithParameter("@UserId", userId);
-            var query = this._postsContainer.GetItemQueryIterator<BlogPost>(queryDef);
+            var query = this._usersContainer.GetItemQueryIterator<BlogPost>(queryDef);
 
             while (query.HasMoreResults)
             {
