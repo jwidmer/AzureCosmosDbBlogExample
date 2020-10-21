@@ -11,11 +11,13 @@ namespace BlogFunctionApp.Services
     public class BlogCosmosDbService : IBlogCosmosDbService
     {
 
+        private Container _usersContainer;
         private Container _postsContainer;
         private Container _feedContainer;
 
         public BlogCosmosDbService(CosmosClient dbClient, string databaseName)
         {
+            _usersContainer = dbClient.GetContainer(databaseName, "Users");
             _postsContainer = dbClient.GetContainer(databaseName, "Posts");
             _feedContainer = dbClient.GetContainer(databaseName, "Feed");
         }
@@ -55,6 +57,11 @@ namespace BlogFunctionApp.Services
         {
             var requestOptions = new ItemRequestOptions { PostTriggers = new List<string> { "truncateFeed" } };
             await this._feedContainer.UpsertItemAsync<Document>(d, new Microsoft.Azure.Cosmos.PartitionKey(type), requestOptions);
+        }
+
+        public async Task UpsertPostToUsersContainerAsync(Document d, string userId)
+        {
+            await this._usersContainer.UpsertItemAsync<Document>(d, new Microsoft.Azure.Cosmos.PartitionKey(userId));
         }
 
     }

@@ -39,8 +39,8 @@ namespace BlogFunctionApp
                     var username = d.GetPropertyValue<string>("username");
                     var action = d.GetPropertyValue<string>("action");
 
-                    //do not process any changes to the unique_username items.
-                    if (type == "unique_username")
+                    //do not process any changes to the unique_username items or post items.
+                    if (type != "user")
                     {
                         continue;
                     }
