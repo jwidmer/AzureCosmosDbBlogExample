@@ -55,6 +55,12 @@ namespace BlogFunctionApp
                     //We assume that most users choose a suitable username during sign-up and won't ever change it, so this update will run very rarely.
                     await _blogDbService.UpdateUsernameInPostsContainer(userId, username);
 
+                    //Question: Do we need to upsert to the Users or the Feed containers?
+                    // No. While the Users of type=post and Feed items also need to have username updated,
+                    //  it will happen via the PostsChangeFeed triggerred by the changes applied in the UpdateUsernameInPostsContainer.
+
+
+
                 }
             }
         }
