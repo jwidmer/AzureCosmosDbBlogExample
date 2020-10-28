@@ -38,6 +38,7 @@ namespace BlogFunctionApp
                     var type = d.GetPropertyValue<string>("type");
                     var userId = d.GetPropertyValue<string>("userId");
                     var postId = d.GetPropertyValue<string>("postId");
+                    var dateCreated = d.GetPropertyValue<DateTime>("dateCreated");
 
                     //we only want to insert posts into the feed container (not comments or likes).
                     if (type != "post")
@@ -45,7 +46,16 @@ namespace BlogFunctionApp
                         continue;
                     }
 
-                    await _blogDbService.UpsertPostToFeedContainerAsync(d, type);
+                    //TODO: we only need to upsert to the feed container if
+                    // A) the post already exists in the feed
+                    // B) or if this post is newer than any of the posts in the feed container.
+
+                    var post = await _blogDbService.GetPostFromFeedContainerAsync(postId);
+                    var oldestDateCreatedInFeed = await _blogDbService.GetOldestDateCreatedFromFeedContainerAsync();
+                    if (post != null || (oldestDateCreatedInFeed != null && dateCreated >= oldestDateCreatedInFeed.Value))
+                    {
+                        await _blogDbService.UpsertPostToFeedContainerAsync(d, type);
+                    }
 
                     //this is used for listing a user's posts
                     // since users container is partitioned by userId, inserting the posts into that container will give us a place to query using the partition key

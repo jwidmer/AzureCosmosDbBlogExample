@@ -64,5 +64,45 @@ namespace BlogFunctionApp.Services
             await this._usersContainer.UpsertItemAsync<Document>(d, new Microsoft.Azure.Cosmos.PartitionKey(userId));
         }
 
+
+        public async Task<Document> GetPostFromFeedContainerAsync(string postId)
+        {
+            try
+            {
+                ItemResponse<Document> response = await this._feedContainer.ReadItemAsync<Document>(postId, new Microsoft.Azure.Cosmos.PartitionKey(postId));
+                var ru = response.RequestCharge;
+                return response.Resource;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+        }
+
+        public async Task<DateTime?> GetOldestDateCreatedFromFeedContainerAsync()
+        {
+            try
+            {
+                var queryString = $"SELECT VALUE MIN(f.dateCreated) FROM f";
+
+                var queryDef = new QueryDefinition(queryString);
+                var query = this._feedContainer.GetItemQueryIterator<DateTime>(queryDef);
+
+                DateTime? oldestDateCreated = null;
+                while (query.HasMoreResults)
+                {
+                    var response = await query.ReadNextAsync();
+                    var ru = response.RequestCharge;
+                    oldestDateCreated = response.SingleOrDefault();
+                }
+
+                return oldestDateCreated;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+        }
+
     }
 }

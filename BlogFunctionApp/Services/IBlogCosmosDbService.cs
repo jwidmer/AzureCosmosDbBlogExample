@@ -11,5 +11,9 @@ namespace BlogFunctionApp.Services
         Task UpdateUsernameInPostsContainer(string userId, string newUsername);
         Task UpsertPostToFeedContainerAsync(Document d, string type);
         Task UpsertPostToUsersContainerAsync(Document d, string userId);
+
+        Task<Document> GetPostFromFeedContainerAsync(string postId);
+        Task<DateTime?> GetOldestDateCreatedFromFeedContainerAsync();
+
     }
 }
