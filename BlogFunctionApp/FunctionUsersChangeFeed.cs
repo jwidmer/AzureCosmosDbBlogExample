@@ -20,7 +20,7 @@ namespace BlogFunctionApp
 
         [FunctionName("UsersChangeFeed")]
         public async Task Run([CosmosDBTrigger(
-            databaseName: "MyBlog",
+            databaseName: "%DatabaseName%",
             collectionName: "Users",
             ConnectionStringSetting = "CosmosDbBlogConnectionString",
             LeaseCollectionName = "Leases",
