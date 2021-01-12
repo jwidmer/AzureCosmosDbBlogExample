@@ -4,6 +4,7 @@
         {
             "tool": "choco-install",
             "input": "azure-cosmosdb-emulator"
+            "additionalOptions": "-y"
         }
     ]
 }
