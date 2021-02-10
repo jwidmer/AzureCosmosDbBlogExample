@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using BlogWebApp.Models;
 using BlogWebApp.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -112,6 +113,8 @@ namespace BlogWebApp
                 .WithSerializerOptions(new CosmosSerializationOptions() { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase })
                 .Build();
             var blogCosmosDbService = new BlogCosmosDbService(client, databaseName);
+
+
             DatabaseResponse database = await client.CreateDatabaseIfNotExistsAsync(databaseName);
 
             //IMPORTANT: Container name is also specified in the BlogCosmosDbService
@@ -120,6 +123,20 @@ namespace BlogWebApp
                                 .Path("/username")
                             .Attach()
                             .CreateIfNotExistsAsync();
+
+            //check to see if the posts container exists since if this is a new instance we want to insert a Hello World post
+
+            var insertHelloWorldPost = false;
+            try
+            {
+                //check to see if the posts container already exists.  This will throw an exception if it does not exist.
+                var postsContainerTemp = client.GetContainer(databaseName, "Posts");
+                var _ = await postsContainerTemp.ReadContainerAsync();
+            }
+            catch (Exception ex2)
+            {
+                insertHelloWorldPost = true;
+            }
 
             await database.Database.CreateContainerIfNotExistsAsync("Posts", "/postId");
 
@@ -139,6 +156,31 @@ namespace BlogWebApp
             //add the feed container post-trigger (for truncated the number of items in the Feed container).
             var feedContainer = database.Database.GetContainer("Feed");
             await UpsertTriggerAsync(feedContainer, @"CosmosDbScripts\triggers\truncateFeed.js", TriggerOperation.All, TriggerType.Post);
+
+            if (insertHelloWorldPost)
+            {
+                var helloWorldPostHtml = @"
+                        <p>Hi there!</p>
+                        <p>This is sample code for the article <a target='_blank' href='https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-model-partition-example'>How to model and partition data on Azure Cosmos DB using a real-world example</a>. </p>
+                        <p>To login as the Blog Administrator, register and login as the username <b>jsmith</b>. The Admin username can be changed in the BlogWebApp appsettings.json file.</p>
+                        <p>Please post any issues that you have with this sample code to the repository at <a target='_blank' href='https://github.com/jwidmer/AzureCosmosDbBlogExample/issues'>https://github.com/jwidmer/AzureCosmosDbBlogExample/issues</a> </p>
+                ";
+
+                var helloWorldPost = new BlogPost
+                {
+                    PostId = Guid.NewGuid().ToString(),
+                    Title = "Hello World!",
+                    Content = helloWorldPostHtml,
+                    AuthorId = Guid.NewGuid().ToString(),
+                    AuthorUsername = "HelloWorldAdmin",
+                    DateCreated = DateTime.UtcNow,
+                };
+
+
+                //insert the hello world post so the first time the blog is not empty
+                await postsContainer.UpsertItemAsync<BlogPost>(helloWorldPost, new PartitionKey(helloWorldPost.PostId));
+
+            }
 
             return blogCosmosDbService;
         }
