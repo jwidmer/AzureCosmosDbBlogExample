@@ -9,7 +9,7 @@ namespace BlogWebApp.ViewModels
 {
     public class BlogPostEditViewModel
     {
-        public string PostId { get; set; }
+        public string? PostId { get; set; }
 
 
         [Required(AllowEmptyStrings = false)]
