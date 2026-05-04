@@ -9,8 +9,6 @@ using Microsoft.Extensions.Hosting;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
-builder.ConfigureFunctionsWebApplication();
-
 // Configuration: local.settings.json values are surfaced as environment variables by the Functions host,
 // so reading them via builder.Configuration["KeyName"] just works in both local and Azure environments.
 string databaseName = builder.Configuration["DatabaseName"]
