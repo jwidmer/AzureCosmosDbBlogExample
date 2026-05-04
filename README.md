@@ -6,7 +6,9 @@ This repository contains sample code for the article [How to model and partition
 
 
 ## Prerequisites
-1. **Visual Studio 2019** - You can download Visual Studio 2019 Community Edition [here](https://visualstudio.microsoft.com/downloads/).
+1. **Visual Studio 2026 (or current latest) with the .NET 10 SDK installed** - You can download Visual Studio Community Edition [here](https://visualstudio.microsoft.com/downloads/).
+1. **.NET 10 SDK** - You can download the .NET 10 SDK [here](https://dotnet.microsoft.com/download).
+1. **Azure Functions Core Tools v4** - Required for running the BlogFunctionApp locally. Installation instructions can be found [here](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local).
 1. **Azure Cosmos DB Emulator** - More information on how to install and use the Azure Cosmos DB emulator can be found [here](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator).
 1. **Azure Storage Emulator** - More information on how to install and use Azure Storage Emulator can be found [here](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator).
 
@@ -38,3 +40,9 @@ This repository contains sample code for the article [How to model and partition
 - [Azure Cosmos DB Documentation](https://docs.microsoft.com/azure/cosmos-db/index)
 - [Azure Cosmos DB .NET SDK for SQL API](https://docs.microsoft.com/azure/cosmos-db/sql-api-sdk-dotnet)
 - [Azure Cosmos DB .NET SDK Reference Documentation](https://docs.microsoft.com/dotnet/api/overview/azure/cosmosdb?view=azure-dotnet)
+
+
+
+## .NET 10 modernization (2026)
+
+This project was upgraded from .NET Core 3.1 + Azure Functions v3 (in-process) to **.NET 10 + Azure Functions v4 (isolated worker)**. The teaching focus on Cosmos DB partition strategy is unchanged. The prior commits remain available in the git history if you want to follow along with the original .NET Core 3.1 sample paired with the Microsoft docs article.
