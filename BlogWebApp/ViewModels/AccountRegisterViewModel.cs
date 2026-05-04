@@ -16,7 +16,7 @@ namespace BlogWebApp.ViewModels
         [Required]
         public string Username { get; set; }
 
-        public string Message { get; set; }
+        public string? Message { get; set; }
 
     }
 }
