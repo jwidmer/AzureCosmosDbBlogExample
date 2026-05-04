@@ -65,7 +65,7 @@ namespace BlogFunctionApp.Services
         }
 
 
-        public async Task<BlogDocument> GetPostFromFeedContainerAsync(string postId)
+        public async Task<BlogDocument?> GetPostFromFeedContainerAsync(string postId)
         {
             try
             {

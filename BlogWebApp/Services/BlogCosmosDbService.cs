@@ -65,7 +65,7 @@ namespace BlogWebApp.Services
         }
 
 
-        public async Task<BlogPost> GetBlogPostAsync(string postId)
+        public async Task<BlogPost?> GetBlogPostAsync(string postId)
         {
             try
             {
@@ -157,7 +157,7 @@ namespace BlogWebApp.Services
             return likes;
         }
 
-        public async Task<BlogPostLike> GetBlogPostLikeForUserIdAsync(string postId, string userId)
+        public async Task<BlogPostLike?> GetBlogPostLikeForUserIdAsync(string postId, string userId)
         {
             var queryString = $"SELECT TOP 1 * FROM p WHERE p.type='like' AND p.postId = @PostId AND p.userId = @UserId ORDER BY p.dateCreated DESC";
 
@@ -166,7 +166,7 @@ namespace BlogWebApp.Services
             queryDef.WithParameter("@UserId", userId);
             var query = this._postsContainer.GetItemQueryIterator<BlogPostLike>(queryDef);
 
-            BlogPostLike like = null;
+            BlogPostLike? like = null;
             if (query.HasMoreResults)
             {
                 var response = await query.ReadNextAsync();
@@ -208,7 +208,7 @@ namespace BlogWebApp.Services
             public string Type => "unique_username";
 
             [JsonProperty(PropertyName = "username")]
-            public string Username { get; set; }
+            public string Username { get; set; } = string.Empty;
 
 
         }
@@ -247,7 +247,7 @@ namespace BlogWebApp.Services
         }
 
 
-        public async Task<BlogUser> GetUserAsync(string username)
+        public async Task<BlogUser?> GetUserAsync(string username)
         {
 
             var queryDefinition = new QueryDefinition("SELECT * FROM u WHERE u.type = 'user' AND u.username = @username").WithParameter("@username", username);

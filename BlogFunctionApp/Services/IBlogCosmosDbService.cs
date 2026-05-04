@@ -12,7 +12,7 @@ namespace BlogFunctionApp.Services
         Task UpsertPostToFeedContainerAsync(BlogDocument d, string type);
         Task UpsertPostToUsersContainerAsync(BlogDocument d, string userId);
 
-        Task<BlogDocument> GetPostFromFeedContainerAsync(string postId);
+        Task<BlogDocument?> GetPostFromFeedContainerAsync(string postId);
         Task<DateTime?> GetOldestDateCreatedFromFeedContainerAsync();
 
     }

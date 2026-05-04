@@ -19,7 +19,7 @@ namespace BlogWebApp.Models
         }
 
         [JsonProperty(PropertyName = "commentId")]
-        public string CommentId { get; set; }
+        public string CommentId { get; set; } = string.Empty;
 
 
         [JsonProperty(PropertyName = "type")]
@@ -32,19 +32,19 @@ namespace BlogWebApp.Models
         }
 
         [JsonProperty(PropertyName = "postId")]
-        public string PostId { get; set; }
+        public string PostId { get; set; } = string.Empty;
 
 
 
         [JsonProperty(PropertyName = "userId")]
-        public string CommentAuthorId { get; set; }
+        public string CommentAuthorId { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "userUsername")]
-        public string CommentAuthorUsername { get; set; }
+        public string CommentAuthorUsername { get; set; } = string.Empty;
 
 
         [JsonProperty(PropertyName = "content")]
-        public string CommentContent { get; set; }
+        public string CommentContent { get; set; } = string.Empty;
 
 
         [JsonProperty(PropertyName = "dateCreated")]

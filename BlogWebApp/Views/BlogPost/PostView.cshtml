@@ -8,7 +8,7 @@
     </h1>
 
 
-    @if (User.Identity.IsAuthenticated)
+    @if (User.Identity?.IsAuthenticated == true)
     {
         if (Model.UserLikedPost)
         {
@@ -51,7 +51,7 @@
 }
 
 
-@if (User.Identity.IsAuthenticated)
+@if (User.Identity?.IsAuthenticated == true)
 {
     using (Html.BeginForm("PostCommentNew", "BlogPost", new { postId = Model.PostId }))
     {

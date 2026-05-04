@@ -31,7 +31,8 @@ namespace BlogWebApp.Controllers
         [Authorize]
         public async Task<IActionResult> UserProfile()
         {
-            var username = User.Identity.Name;
+            var username = User.Identity?.Name
+                ?? throw new InvalidOperationException("Authenticated user has no name.");
 
             var m = new UserProfileViewModel
             {
@@ -48,12 +49,14 @@ namespace BlogWebApp.Controllers
         public async Task<IActionResult> UserProfile(string newUsername)
         {
 
-            var oldUsername = User.Identity.Name;
+            var oldUsername = User.Identity?.Name
+                ?? throw new InvalidOperationException("Authenticated user has no name.");
 
             if (newUsername != oldUsername)
             {
                 //Update username
-                var u = await _blogDbService.GetUserAsync(oldUsername);
+                var u = await _blogDbService.GetUserAsync(oldUsername)
+                    ?? throw new InvalidOperationException($"Authenticated user '{oldUsername}' was not found in the user store.");
 
                 //set the new username on the user object.
                 u.Username = newUsername;

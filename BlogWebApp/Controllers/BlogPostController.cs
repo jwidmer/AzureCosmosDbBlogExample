@@ -39,9 +39,10 @@ namespace BlogWebApp.Controllers
 
             var userLikedPost = false;
 
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
-                var userId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value;
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                    ?? throw new InvalidOperationException("Authenticated user has no NameIdentifier claim.");
                 var like = await _blogDbService.GetBlogPostLikeForUserIdAsync(postId, userId);
                 userLikedPost = like != null;
             }
@@ -113,8 +114,10 @@ namespace BlogWebApp.Controllers
                 PostId = Guid.NewGuid().ToString(),
                 Title = blogPostChanges.Title,
                 Content = blogPostChanges.Content,
-                AuthorId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value,
-                AuthorUsername = User.Identity.Name,
+                AuthorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                    ?? throw new InvalidOperationException("Authenticated user has no NameIdentifier claim."),
+                AuthorUsername = User.Identity?.Name
+                    ?? throw new InvalidOperationException("Authenticated user has no name."),
                 DateCreated = DateTime.UtcNow,
             };
 
@@ -177,8 +180,10 @@ namespace BlogWebApp.Controllers
                         PostId = postId,
                         CommentContent = comment,
 
-                        CommentAuthorId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value,
-                        CommentAuthorUsername = User.Identity.Name,
+                        CommentAuthorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                            ?? throw new InvalidOperationException("Authenticated user has no NameIdentifier claim."),
+                        CommentAuthorUsername = User.Identity?.Name
+                            ?? throw new InvalidOperationException("Authenticated user has no name."),
                         CommentDateCreated = DateTime.UtcNow
                     };
 
@@ -202,7 +207,8 @@ namespace BlogWebApp.Controllers
             {
 
                 //Check that this user has not already liked this post
-                var userId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value;
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                    ?? throw new InvalidOperationException("Authenticated user has no NameIdentifier claim.");
                 var like = await _blogDbService.GetBlogPostLikeForUserIdAsync(postId, userId);
 
                 if (like == null)
@@ -212,8 +218,10 @@ namespace BlogWebApp.Controllers
                         LikeId = Guid.NewGuid().ToString(),
                         PostId = postId,
 
-                        LikeAuthorId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value,
-                        LikeAuthorUsername = User.Identity.Name,
+                        LikeAuthorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                            ?? throw new InvalidOperationException("Authenticated user has no NameIdentifier claim."),
+                        LikeAuthorUsername = User.Identity?.Name
+                            ?? throw new InvalidOperationException("Authenticated user has no name."),
                         LikeDateCreated = DateTime.UtcNow
                     };
 
@@ -234,7 +242,8 @@ namespace BlogWebApp.Controllers
 
             if (bp != null)
             {
-                var userId = User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier).Value;
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                    ?? throw new InvalidOperationException("Authenticated user has no NameIdentifier claim.");
                 await _blogDbService.DeleteBlogPostLikeAsync(postId, userId);
             }
 

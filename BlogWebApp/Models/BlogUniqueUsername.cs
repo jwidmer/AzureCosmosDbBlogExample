@@ -10,10 +10,10 @@ namespace BlogWebApp.Models
     {
 
         [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "userId")]
-        public string UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
 
 
         [JsonProperty(PropertyName = "type")]
@@ -27,7 +27,7 @@ namespace BlogWebApp.Models
 
 
         [JsonProperty(PropertyName = "username")]
-        public string Username { get; set; }
+        public string Username { get; set; } = string.Empty;
 
 
         public override string ToString()

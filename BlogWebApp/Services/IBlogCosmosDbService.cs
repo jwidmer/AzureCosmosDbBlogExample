@@ -12,7 +12,7 @@ namespace BlogWebApp.Services
         Task<List<BlogPost>> GetBlogPostsMostRecentAsync(int numberOfPosts);
         Task<List<BlogPost>> GetBlogPostsForUserId(string userId);
 
-        Task<BlogPost> GetBlogPostAsync(string postId);
+        Task<BlogPost?> GetBlogPostAsync(string postId);
         Task UpsertBlogPostAsync(BlogPost post);
 
         Task CreateBlogPostCommentAsync(BlogPostComment comment);
@@ -22,13 +22,13 @@ namespace BlogWebApp.Services
         Task CreateBlogPostLikeAsync(BlogPostLike like);
         Task DeleteBlogPostLikeAsync(string postId, string userId);
         Task<List<BlogPostLike>> GetBlogPostLikesAsync(string postId);
-        Task<BlogPostLike> GetBlogPostLikeForUserIdAsync(string postId, string userId);
+        Task<BlogPostLike?> GetBlogPostLikeForUserIdAsync(string postId, string userId);
 
 
         Task CreateUserAsync(BlogUser user);
         Task UpdateUsernameAsync(BlogUser userWithUpdatedUsername, string oldUsername);
 
-        Task<BlogUser> GetUserAsync(string username);
+        Task<BlogUser?> GetUserAsync(string username);
 
     }
 }
