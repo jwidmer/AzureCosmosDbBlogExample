@@ -1,5 +1,5 @@
-﻿using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Documents;
+using BlogFunctionApp.Models;
+using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -53,23 +53,23 @@ namespace BlogFunctionApp.Services
         }
 
 
-        public async Task UpsertPostToFeedContainerAsync(Document d, string type)
+        public async Task UpsertPostToFeedContainerAsync(BlogDocument d, string type)
         {
             var requestOptions = new ItemRequestOptions { PostTriggers = new List<string> { "truncateFeed" } };
-            await this._feedContainer.UpsertItemAsync<Document>(d, new Microsoft.Azure.Cosmos.PartitionKey(type), requestOptions);
+            await this._feedContainer.UpsertItemAsync<BlogDocument>(d, new Microsoft.Azure.Cosmos.PartitionKey(type), requestOptions);
         }
 
-        public async Task UpsertPostToUsersContainerAsync(Document d, string userId)
+        public async Task UpsertPostToUsersContainerAsync(BlogDocument d, string userId)
         {
-            await this._usersContainer.UpsertItemAsync<Document>(d, new Microsoft.Azure.Cosmos.PartitionKey(userId));
+            await this._usersContainer.UpsertItemAsync<BlogDocument>(d, new Microsoft.Azure.Cosmos.PartitionKey(userId));
         }
 
 
-        public async Task<Document> GetPostFromFeedContainerAsync(string postId)
+        public async Task<BlogDocument> GetPostFromFeedContainerAsync(string postId)
         {
             try
             {
-                ItemResponse<Document> response = await this._feedContainer.ReadItemAsync<Document>(postId, new Microsoft.Azure.Cosmos.PartitionKey(postId));
+                ItemResponse<BlogDocument> response = await this._feedContainer.ReadItemAsync<BlogDocument>(postId, new Microsoft.Azure.Cosmos.PartitionKey(postId));
                 var ru = response.RequestCharge;
                 return response.Resource;
             }
