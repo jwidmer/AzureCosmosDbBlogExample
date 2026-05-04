@@ -1,50 +1,98 @@
 /**
- * Copyright (c) Tiny Technologies, Inc. All rights reserved.
- * Licensed under the LGPL or a commercial license.
- * For LGPL see License.txt in the project root for license information.
- * For commercial licenses see https://www.tiny.cloud/
- *
- * Version: 5.4.1 (2020-07-08)
+ * TinyMCE version 7.6.1 (2025-01-22)
  */
+
 (function () {
     'use strict';
 
-    var global = tinymce.util.Tools.resolve('tinymce.PluginManager');
+    var global$2 = tinymce.util.Tools.resolve('tinymce.PluginManager');
 
-    var isNamedAnchor = function (editor, node) {
-      return node.tagName === 'A' && editor.dom.getAttrib(node, 'href') === '';
+    var global$1 = tinymce.util.Tools.resolve('tinymce.dom.RangeUtils');
+
+    var global = tinymce.util.Tools.resolve('tinymce.util.Tools');
+
+    const option = name => editor => editor.options.get(name);
+    const register$2 = editor => {
+      const registerOption = editor.options.register;
+      registerOption('allow_html_in_named_anchor', {
+        processor: 'boolean',
+        default: false
+      });
     };
-    var isValidId = function (id) {
-      return /^[A-Za-z][A-Za-z0-9\-:._]*$/.test(id);
+    const allowHtmlInNamedAnchor = option('allow_html_in_named_anchor');
+
+    const namedAnchorSelector = 'a:not([href])';
+    const isEmptyString = str => !str;
+    const getIdFromAnchor = elm => {
+      const id = elm.getAttribute('id') || elm.getAttribute('name');
+      return id || '';
     };
-    var getId = function (editor) {
-      var selectedNode = editor.selection.getNode();
-      return isNamedAnchor(editor, selectedNode) ? selectedNode.getAttribute('id') || selectedNode.getAttribute('name') : '';
+    const isAnchor = elm => elm.nodeName.toLowerCase() === 'a';
+    const isNamedAnchor = elm => isAnchor(elm) && !elm.getAttribute('href') && getIdFromAnchor(elm) !== '';
+    const isEmptyNamedAnchor = elm => isNamedAnchor(elm) && !elm.firstChild;
+
+    const removeEmptyNamedAnchorsInSelection = editor => {
+      const dom = editor.dom;
+      global$1(dom).walk(editor.selection.getRng(), nodes => {
+        global.each(nodes, node => {
+          if (isEmptyNamedAnchor(node)) {
+            dom.remove(node, false);
+          }
+        });
+      });
     };
-    var insert = function (editor, id) {
-      var selectedNode = editor.selection.getNode();
-      if (isNamedAnchor(editor, selectedNode)) {
-        selectedNode.removeAttribute('name');
-        selectedNode.id = id;
-        editor.undoManager.add();
+    const isValidId = id => /^[A-Za-z][A-Za-z0-9\-:._]*$/.test(id);
+    const getNamedAnchor = editor => editor.dom.getParent(editor.selection.getStart(), namedAnchorSelector);
+    const getId = editor => {
+      const anchor = getNamedAnchor(editor);
+      if (anchor) {
+        return getIdFromAnchor(anchor);
       } else {
-        editor.focus();
-        editor.selection.collapse(true);
-        editor.insertContent(editor.dom.createHTML('a', { id: id }));
+        return '';
       }
     };
+    const createAnchor = (editor, id) => {
+      editor.undoManager.transact(() => {
+        if (!allowHtmlInNamedAnchor(editor)) {
+          editor.selection.collapse(true);
+        }
+        if (editor.selection.isCollapsed()) {
+          editor.insertContent(editor.dom.createHTML('a', { id }));
+        } else {
+          removeEmptyNamedAnchorsInSelection(editor);
+          editor.formatter.remove('namedAnchor', undefined, undefined, true);
+          editor.formatter.apply('namedAnchor', { value: id });
+          editor.addVisual();
+        }
+      });
+    };
+    const updateAnchor = (editor, id, anchorElement) => {
+      anchorElement.removeAttribute('name');
+      anchorElement.id = id;
+      editor.addVisual();
+      editor.undoManager.add();
+    };
+    const insert = (editor, id) => {
+      const anchor = getNamedAnchor(editor);
+      if (anchor) {
+        updateAnchor(editor, id, anchor);
+      } else {
+        createAnchor(editor, id);
+      }
+      editor.focus();
+    };
 
-    var insertAnchor = function (editor, newId) {
+    const insertAnchor = (editor, newId) => {
       if (!isValidId(newId)) {
-        editor.windowManager.alert('Id should start with a letter, followed only by letters, numbers, dashes, dots, colons or underscores.');
+        editor.windowManager.alert('ID should start with a letter, followed only by letters, numbers, dashes, dots, colons or underscores.');
         return false;
       } else {
         insert(editor, newId);
         return true;
       }
     };
-    var open = function (editor) {
-      var currentId = getId(editor);
+    const open = editor => {
+      const currentId = getId(editor);
       editor.windowManager.open({
         title: 'Anchor',
         size: 'normal',
@@ -71,7 +119,7 @@
           }
         ],
         initialData: { id: currentId },
-        onSubmit: function (api) {
+        onSubmit: api => {
           if (insertAnchor(editor, api.getData().id)) {
             api.close();
           }
@@ -79,59 +127,88 @@
       });
     };
 
-    var register = function (editor) {
-      editor.addCommand('mceAnchor', function () {
+    const register$1 = editor => {
+      editor.addCommand('mceAnchor', () => {
         open(editor);
       });
     };
 
-    var isNamedAnchorNode = function (node) {
-      return !node.attr('href') && (node.attr('id') || node.attr('name')) && !node.firstChild;
-    };
-    var setContentEditable = function (state) {
-      return function (nodes) {
-        for (var i = 0; i < nodes.length; i++) {
-          if (isNamedAnchorNode(nodes[i])) {
-            nodes[i].attr('contenteditable', state);
-          }
+    const isNamedAnchorNode = node => isEmptyString(node.attr('href')) && !isEmptyString(node.attr('id') || node.attr('name'));
+    const isEmptyNamedAnchorNode = node => isNamedAnchorNode(node) && !node.firstChild;
+    const setContentEditable = state => nodes => {
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        if (isEmptyNamedAnchorNode(node)) {
+          node.attr('contenteditable', state);
         }
-      };
+      }
     };
-    var setup = function (editor) {
-      editor.on('PreInit', function () {
+    const setup = editor => {
+      editor.on('PreInit', () => {
         editor.parser.addNodeFilter('a', setContentEditable('false'));
         editor.serializer.addNodeFilter('a', setContentEditable(null));
       });
     };
 
-    var register$1 = function (editor) {
+    const registerFormats = editor => {
+      editor.formatter.register('namedAnchor', {
+        inline: 'a',
+        selector: namedAnchorSelector,
+        remove: 'all',
+        split: true,
+        deep: true,
+        attributes: { id: '%value' },
+        onmatch: (node, _fmt, _itemName) => {
+          return isNamedAnchor(node);
+        }
+      });
+    };
+
+    const onSetupEditable = editor => api => {
+      const nodeChanged = () => {
+        api.setEnabled(editor.selection.isEditable());
+      };
+      editor.on('NodeChange', nodeChanged);
+      nodeChanged();
+      return () => {
+        editor.off('NodeChange', nodeChanged);
+      };
+    };
+    const register = editor => {
+      const onAction = () => editor.execCommand('mceAnchor');
       editor.ui.registry.addToggleButton('anchor', {
         icon: 'bookmark',
         tooltip: 'Anchor',
-        onAction: function () {
-          return editor.execCommand('mceAnchor');
-        },
-        onSetup: function (buttonApi) {
-          return editor.selection.selectorChangedWithUnbind('a:not([href])', buttonApi.setActive).unbind;
+        onAction,
+        onSetup: buttonApi => {
+          const unbindSelectorChanged = editor.selection.selectorChangedWithUnbind('a:not([href])', buttonApi.setActive).unbind;
+          const unbindEditableChanged = onSetupEditable(editor)(buttonApi);
+          return () => {
+            unbindSelectorChanged();
+            unbindEditableChanged();
+          };
         }
       });
       editor.ui.registry.addMenuItem('anchor', {
         icon: 'bookmark',
         text: 'Anchor...',
-        onAction: function () {
-          return editor.execCommand('mceAnchor');
-        }
+        onAction,
+        onSetup: onSetupEditable(editor)
       });
     };
 
-    function Plugin () {
-      global.add('anchor', function (editor) {
+    var Plugin = () => {
+      global$2.add('anchor', editor => {
+        register$2(editor);
         setup(editor);
-        register(editor);
         register$1(editor);
+        register(editor);
+        editor.on('PreInit', () => {
+          registerFormats(editor);
+        });
       });
-    }
+    };
 
     Plugin();
 
-}());
+})();

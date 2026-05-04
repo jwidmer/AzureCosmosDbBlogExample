@@ -4,17 +4,12 @@
   "libraries": [
     {
       "provider": "cdnjs",
-      "library": "jquery@3.5.1",
-      "destination": "wwwroot/lib/jquery/"
-    },
-    {
-      "provider": "cdnjs",
-      "library": "twitter-bootstrap@4.5.0",
+      "library": "twitter-bootstrap@5.3.3",
       "destination": "wwwroot/lib/bootstrap/"
     },
     {
       "provider": "cdnjs",
-      "library": "tinymce@5.4.1",
+      "library": "tinymce@7.6.1",
       "destination": "wwwroot/lib/tinymce/"
     }
   ]
