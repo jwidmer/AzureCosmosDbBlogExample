@@ -56,7 +56,7 @@
     using (Html.BeginForm("PostCommentNew", "BlogPost", new { postId = Model.PostId }))
     {
 
-        <div class="form-group">
+        <div class="mb-3">
             <label for="comment" class="h5">Add New Comment</label>
             <textarea rows="5" class="form-control" id="comment" name="comment" style="resize:vertical;"></textarea>
             <small id="commentHelp" class="form-text text-muted">You can add a comment to this blog post.</small>
