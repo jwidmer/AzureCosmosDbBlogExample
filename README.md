@@ -32,6 +32,28 @@ This repository contains sample code for the article [How to model and partition
 
 	*To login as the Blog Administrator, register and login as the username **jsmith**.  The Admin username can be changed in the BlogWebApp appsettings.json file.*
 
+## Running this sample using GitHub Codespaces 
+This repository can be run within a GitHub Codespace (Preview).
+
+**From Visual Studio 2019 Preview**
+
+1. From the Visual Studio 2019 Preview home screen click **Connect to a codespace**.
+1. Enter the repository url and start your codespace.
+1. Once the codespace loads, open the Terminal window (View > Terminal).
+1. Run the following to install the prerequisites (Azure Cosmos DB Emulator, Azure Storage Emulator, and SQL Server for Azure Storage Emulator):
+
+	`devinit init`
+
+	Note: I had to run this command twice.  The first time it takes about 5 minutes while SQL Server is downloaded and installed and then it fails.  The second time it will run successfully but much faster than the first since SQL Server will already be installed.
+1. From within the Terminal window, change your directory to *C:\Program Files\Azure Cosmos DB Emulator*.
+1. Run *.\Microsoft.Azure.Cosmos.Emulator.exe start* to start the Azure Cosmos DB Emulator.
+
+	`PS C:\Program Files\Azure Cosmos DB Emulator> .\Microsoft.Azure.Cosmos.Emulator.exe start`
+	
+1. Now hit F5 to run the application and it will start in your browser.
+
+
+
 
 
 ## More information

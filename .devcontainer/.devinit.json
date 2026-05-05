@@ -1,0 +1,17 @@
+{
+    "$schema": "https://json.schemastore.org/devinit.schema-3.0",
+    "run": [
+        {
+            "tool": "require-mssql"
+        },
+        {
+            "tool": "choco-install",
+            "input": "azure-cosmosdb-emulator",
+            "additionalOptions": "-y"
+        },
+        {
+            "tool": "choco-install",
+            "input": "azurestorageemulator"
+        }
+    ]
+}

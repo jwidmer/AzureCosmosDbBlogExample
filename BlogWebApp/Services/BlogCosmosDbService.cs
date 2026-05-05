@@ -38,6 +38,19 @@ namespace BlogWebApp.Services
                 blogPosts.AddRange(response.ToList());
             }
 
+            //if there are no posts in the feedcontainer, go to the posts container.
+            // There may be one that has not propagated to the feed container yet by the azure function (or the azure function is not running).
+            if (!blogPosts.Any())
+            {
+                var queryFromPostsContainter = _postsContainer.GetItemQueryIterator<BlogPost>(new QueryDefinition(queryString));
+                while (queryFromPostsContainter.HasMoreResults)
+                {
+                    var response = await queryFromPostsContainter.ReadNextAsync();
+                    var ru = response.RequestCharge;
+                    blogPosts.AddRange(response.ToList());
+                }
+            }
+
             return blogPosts;
         }
 

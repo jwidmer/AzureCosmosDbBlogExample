@@ -1,5 +1,6 @@
 using System.IO;
 using BlogWebApp;
+using BlogWebApp.Models;
 using BlogWebApp.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -84,6 +85,17 @@ static async Task<BlogCosmosDbService> InitializeCosmosBlogClientInstanceAsync(I
                     .Attach()
                     .CreateIfNotExistsAsync();
 
+    // Detect a fresh database (Posts container does not yet exist) so we can seed a Hello World post below.
+    bool insertHelloWorldPost = false;
+    try
+    {
+        await client.GetContainer(databaseName, "Posts").ReadContainerAsync();
+    }
+    catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+    {
+        insertHelloWorldPost = true;
+    }
+
     await database.Database.CreateContainerIfNotExistsAsync("Posts", "/postId");
 
     // Posts get upserted into the Feed container from the change feed.
@@ -99,6 +111,29 @@ static async Task<BlogCosmosDbService> InitializeCosmosBlogClientInstanceAsync(I
     // Add the feed container post-trigger (truncates the Feed container).
     var feedContainer = database.Database.GetContainer("Feed");
     await UpsertTriggerAsync(feedContainer, @"CosmosDbScripts\triggers\truncateFeed.js", TriggerOperation.All, TriggerType.Post);
+
+    // Seed a Hello World post on first run so the home page is never empty.
+    if (insertHelloWorldPost)
+    {
+        const string helloWorldPostHtml = @"
+                <p>Hi there!</p>
+                <p>This is sample code for the article <a target='_blank' href='https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-model-partition-example'>How to model and partition data on Azure Cosmos DB using a real-world example</a>.</p>
+                <p>To login as the Blog Administrator, register and login as the username <b>jsmith</b>. The Admin username can be changed in the BlogWebApp appsettings.json file.</p>
+                <p>Please post any issues that you have with this sample code to the repository at <a target='_blank' href='https://github.com/jwidmer/AzureCosmosDbBlogExample/issues'>https://github.com/jwidmer/AzureCosmosDbBlogExample/issues</a></p>
+        ";
+
+        var helloWorldPost = new BlogPost
+        {
+            PostId = Guid.NewGuid().ToString(),
+            Title = "Hello World!",
+            Content = helloWorldPostHtml,
+            AuthorId = Guid.NewGuid().ToString(),
+            AuthorUsername = "HelloWorldAdmin",
+            DateCreated = DateTime.UtcNow,
+        };
+
+        await postsContainer.UpsertItemAsync(helloWorldPost, new PartitionKey(helloWorldPost.PostId));
+    }
 
     return blogCosmosDbService;
 }
