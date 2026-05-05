@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Documents;
+using BlogFunctionApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +9,10 @@ namespace BlogFunctionApp.Services
     public interface IBlogCosmosDbService
     {
         Task UpdateUsernameInPostsContainer(string userId, string newUsername);
-        Task UpsertPostToFeedContainerAsync(Document d, string type);
-        Task UpsertPostToUsersContainerAsync(Document d, string userId);
+        Task UpsertPostToFeedContainerAsync(BlogDocument d, string type);
+        Task UpsertPostToUsersContainerAsync(BlogDocument d, string userId);
 
-        Task<Document> GetPostFromFeedContainerAsync(string postId);
+        Task<BlogDocument?> GetPostFromFeedContainerAsync(string postId);
         Task<DateTime?> GetOldestDateCreatedFromFeedContainerAsync();
 
     }

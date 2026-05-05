@@ -7,8 +7,8 @@ namespace BlogWebApp.ViewModels
     public class UserProfileViewModel
     {
 
-        public string OldUsername { get; set; }
-        public string NewUsername { get; set; }
+        public string OldUsername { get; set; } = string.Empty;
+        public string NewUsername { get; set; } = string.Empty;
 
     }
 }

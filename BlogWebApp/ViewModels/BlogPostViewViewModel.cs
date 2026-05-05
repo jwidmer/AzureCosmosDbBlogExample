@@ -6,22 +6,22 @@ namespace BlogWebApp.ViewModels
 {
     public class BlogPostViewViewModel
     {
-        public string PostId { get; set; }
+        public string PostId { get; set; } = string.Empty;
 
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
 
         public int CommentCount { get; set; }
 
         public bool UserLikedPost { get; set; }
         public int LikeCount { get; set; }
 
-        public string AuthorId { get; set; }
-        public string AuthorUsername { get; set; }
+        public string AuthorId { get; set; } = string.Empty;
+        public string AuthorUsername { get; set; } = string.Empty;
 
 
-        public List<BlogPostComment> Comments { get; set; }
+        public List<BlogPostComment> Comments { get; set; } = new();
 
     }
 }

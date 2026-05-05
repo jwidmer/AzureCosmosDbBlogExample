@@ -7,7 +7,7 @@ namespace BlogWebApp.ViewModels
 {
     public class BlogErrorViewModel
     {
-        public string RequestId { get; set; }
+        public string? RequestId { get; set; }
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 

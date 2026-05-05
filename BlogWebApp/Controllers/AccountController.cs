@@ -87,7 +87,7 @@ namespace BlogWebApp.Controllers
 
         [Route("Login")]
         [HttpPost]
-        public async Task<IActionResult> Login(AccountLoginViewModel m, string returnUrl)
+        public async Task<IActionResult> Login(AccountLoginViewModel m, string? returnUrl)
         {
 
             if (!ModelState.IsValid)

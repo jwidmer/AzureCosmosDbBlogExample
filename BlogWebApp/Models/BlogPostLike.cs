@@ -19,7 +19,7 @@ namespace BlogWebApp.Models
         }
 
         [JsonProperty(PropertyName = "likeId")]
-        public string LikeId { get; set; }
+        public string LikeId { get; set; } = string.Empty;
 
 
         [JsonProperty(PropertyName = "type")]
@@ -32,15 +32,15 @@ namespace BlogWebApp.Models
         }
 
         [JsonProperty(PropertyName = "postId")]
-        public string PostId { get; set; }
+        public string PostId { get; set; } = string.Empty;
 
 
 
         [JsonProperty(PropertyName = "userId")]
-        public string LikeAuthorId { get; set; }
+        public string LikeAuthorId { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "userUsername")]
-        public string LikeAuthorUsername { get; set; }
+        public string LikeAuthorUsername { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "dateCreated")]
         public DateTime LikeDateCreated { get; set; }

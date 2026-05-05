@@ -9,7 +9,7 @@ namespace BlogWebApp.ViewModels
     public class BlogHomePageViewModel
     {
 
-        public List<BlogPost> BlogPostsMostRecent { get; set; }
+        public List<BlogPost> BlogPostsMostRecent { get; set; } = new();
 
 
     }

@@ -8,7 +8,7 @@ namespace BlogWebApp
     public class AppSettings
     {
 
-        public string AdminUsername { get; set; }
+        public string AdminUsername { get; set; } = string.Empty;
 
     }
 }

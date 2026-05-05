@@ -9,15 +9,15 @@ namespace BlogWebApp.ViewModels
 {
     public class BlogPostEditViewModel
     {
-        public string PostId { get; set; }
+        public string? PostId { get; set; }
 
 
         [Required(AllowEmptyStrings = false)]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
 
         [Required(AllowEmptyStrings = false)]
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
 
     }
 }

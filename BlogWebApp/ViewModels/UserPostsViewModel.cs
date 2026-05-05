@@ -9,8 +9,8 @@ namespace BlogWebApp.ViewModels
     public class UserPostsViewModel
     {
 
-        public string Username { get; set; }
-        public List<BlogPost> Posts { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public List<BlogPost> Posts { get; set; } = new();
 
 
     }
