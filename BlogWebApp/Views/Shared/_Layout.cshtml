@@ -21,7 +21,7 @@
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <span class="navbar-text text-dark"><span class="d-sm-none d-md-inline">Signed in as </span>@User.Identity.Name</span>
+                                <span class="nav-link text-dark"><span class="d-sm-none d-md-inline">Signed in as </span>@User.Identity.Name</span>
                             </li>
                             @if (User.IsInRole("Admin"))
                             {
