@@ -70,8 +70,13 @@ static async Task<BlogCosmosDbService> InitializeCosmosBlogClientInstanceAsync(I
     var clientBuilder = new CosmosClientBuilder(account, key);
     CosmosClient client = clientBuilder
         .WithApplicationName(databaseName)
-        .WithApplicationName(Regions.EastUS)
-        .WithConnectionModeDirect()
+        // Gateway mode (HTTPS 443 only). Direct mode needs outbound TCP on the
+        // 10000-20000 port range, which Azure App Service Linux does not reliably
+        // allow: control-plane ops (create database/containers) route through the
+        // gateway and succeed, but data-plane ops (sproc upserts, queries) hang
+        // under direct mode and trip the App Service container-start timeout.
+        // Gateway is the App Service-recommended mode and is fine for this sample.
+        .WithConnectionModeGateway()
         .WithSerializerOptions(new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase })
         .Build();
 
@@ -101,16 +106,21 @@ static async Task<BlogCosmosDbService> InitializeCosmosBlogClientInstanceAsync(I
     // Posts get upserted into the Feed container from the change feed.
     await database.Database.CreateContainerIfNotExistsAsync("Feed", "/type");
 
-    // Upsert the sprocs in the posts container.
+    // Upsert the sprocs in the posts container. Paths are built with
+    // Path.Combine off AppContext.BaseDirectory so they resolve on Linux
+    // (App Service) as well as Windows, and regardless of the process working
+    // directory. Hardcoded backslash literals broke on Linux, where the
+    // backslash is a literal filename character, not a path separator.
+    var scriptsRoot = Path.Combine(AppContext.BaseDirectory, "CosmosDbScripts");
     var postsContainer = database.Database.GetContainer("Posts");
-    await UpsertStoredProcedureAsync(postsContainer, @"CosmosDbScripts\sprocs\createComment.js");
-    await UpsertStoredProcedureAsync(postsContainer, @"CosmosDbScripts\sprocs\createLike.js");
-    await UpsertStoredProcedureAsync(postsContainer, @"CosmosDbScripts\sprocs\deleteLike.js");
-    await UpsertStoredProcedureAsync(postsContainer, @"CosmosDbScripts\sprocs\updateUsernames.js");
+    await UpsertStoredProcedureAsync(postsContainer, Path.Combine(scriptsRoot, "sprocs", "createComment.js"));
+    await UpsertStoredProcedureAsync(postsContainer, Path.Combine(scriptsRoot, "sprocs", "createLike.js"));
+    await UpsertStoredProcedureAsync(postsContainer, Path.Combine(scriptsRoot, "sprocs", "deleteLike.js"));
+    await UpsertStoredProcedureAsync(postsContainer, Path.Combine(scriptsRoot, "sprocs", "updateUsernames.js"));
 
     // Add the feed container post-trigger (truncates the Feed container).
     var feedContainer = database.Database.GetContainer("Feed");
-    await UpsertTriggerAsync(feedContainer, @"CosmosDbScripts\triggers\truncateFeed.js", TriggerOperation.All, TriggerType.Post);
+    await UpsertTriggerAsync(feedContainer, Path.Combine(scriptsRoot, "triggers", "truncateFeed.js"), TriggerOperation.All, TriggerType.Post);
 
     // Seed a Hello World post on first run so the home page is never empty.
     if (insertHelloWorldPost)

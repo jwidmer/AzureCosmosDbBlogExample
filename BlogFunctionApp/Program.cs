@@ -20,8 +20,11 @@ string connString = builder.Configuration["CosmosDbBlogConnectionString"]
 var clientBuilder = new CosmosClientBuilder(connString);
 CosmosClient client = clientBuilder
     .WithApplicationName(databaseName)
-    .WithApplicationName(Regions.EastUS)
-    .WithConnectionModeDirect()
+    // Gateway mode (HTTPS 443 only) for the same App Service / Functions Linux
+    // outbound-port reason as BlogWebApp. If you deploy this change-feed worker
+    // to a Linux plan, direct mode's 10000-20000 TCP range may be unavailable.
+    // Drop this hunk if you prefer direct mode for the change-feed worker.
+    .WithConnectionModeGateway()
     .WithSerializerOptions(new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase })
     .Build();
 

@@ -11,6 +11,21 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
+  <!-- Cosmos sproc/trigger scripts are read from disk at startup
+       (Program.cs InitializeCosmosBlogClientInstanceAsync). They live outside
+       wwwroot, so the web SDK treats them as non-copied None items by default
+       and they are absent from the published app, so the startup bootstrap
+       throws FileNotFoundException on App Service. Move them to Content with
+       copy-to-output + copy-to-publish. The None Remove first pulls them out of
+       the default None glob to avoid a same-path-in-two-item-types conflict. -->
+  <ItemGroup>
+    <None Remove="CosmosDbScripts\**\*.js" />
+    <Content Include="CosmosDbScripts\**\*.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.7" />
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.59.0" />
